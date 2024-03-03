@@ -19,4 +19,4 @@ endif::[]
 == Chapter2
 Creating and Destroying Object
 
-include::chapter2/Item1.adoc[]
+include::chapter2/Item1.adoc[11]
