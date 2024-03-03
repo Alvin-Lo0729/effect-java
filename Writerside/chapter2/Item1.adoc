@@ -1,0 +1,14 @@
+=== Item1: Consider static factory methods instead of constructors
+用靜態工廠方法代替建構子
+
+對於Class而言，Class可以提供一個public的static factory方法，他只是一個返回Class實例的靜態方法
+
+.範例
+[source,java]
+----
+public class Boolean{
+    public static Boolean valueOf(boolean b){
+        return b ? Bollean.TURE: Boolean.FALSE;
+    }
+}
+----

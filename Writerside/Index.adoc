@@ -1,0 +1,22 @@
+= Effect Java
+:experimental:
+:icons: font
+:sectnums:
+:toc: left
+:toc-title: 大綱
+:imagesdir: images
+:reproducible:
+:hardbreaks-option:
+:hide-uri-scheme:
+:url-org: https://github.com/Alvin-Lo0729
+:url-repo: {url-org}/Effect-Java
+ifdef::env-site[:url-project: link:]
+:url-rel-file-base: link:
+ifdef::env-site,env-yard[]
+:url-rel-file-base: {url-repo}/blob/HEAD/
+endif::[]
+
+== Chapter2
+Creating and Destroying Object
+
+include::chapter2/Item1.adoc[]
