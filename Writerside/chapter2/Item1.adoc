@@ -13,4 +13,4 @@ public class Boolean{
 }
 ----
 
-test1
+test1s
