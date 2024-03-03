@@ -18,5 +18,5 @@ endif::[]
 
 == Chapter2
 Creating and Destroying Object
-
+${url-rel-file-base}
 include::chapter2/Item1.adoc[11]
