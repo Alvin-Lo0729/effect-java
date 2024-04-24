@@ -16,7 +16,7 @@ ifdef::env-site[:url-project: link:]
 ifdef::env-site,env-yard[]
 :url-rel-file-base: {url-repo}/blob/master/
 endif::[]
-:stylesheet: ./css/dark.css
+:stylesheet: ./css/clean.css
 
 == Chapter2:  Creating and Destroying Object
 
