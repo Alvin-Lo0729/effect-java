@@ -10,11 +10,11 @@
 :hardbreaks-option:
 :hide-uri-scheme:
 :url-org: https://github.com/Alvin-Lo0729
-:url-repo: {url-org}/Effect-Java
+:url-repo: {url-org}/effect-java
 ifdef::env-site[:url-project: link:]
 :url-rel-file-base: link:
 ifdef::env-site,env-yard[]
-:url-rel-file-base: {url-repo}/blob/HEAD/
+:url-rel-file-base: {url-repo}/blob/master/
 endif::[]
 :stylesheet: ./css/dark.css
 
