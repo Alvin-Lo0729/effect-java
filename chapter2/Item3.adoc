@@ -1,3 +1,19 @@
 ==== 介紹Singleton
 
+在JAVA中我們要建造 *唯一* 一個物件的時候，我們該怎麼做?
 
+這時候Single pattern是一個很好的方式
+
+.Step1
+[source,java]
+----
+public class A{
+
+    private A(){
+    }
+
+
+}
+
+
+----
