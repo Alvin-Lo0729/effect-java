@@ -1,6 +1,39 @@
 ==== 介紹Singleton
 
-在JAVA中我們要建造 *唯一* 一個物件的時候，我們該怎麼做?
+* 先了解一下JVM怎麼建立物件
+1. 分配記憶體的空間
+2. 將分配到的記憶體的空間(記憶體的空間的地址)給予實例workerInstance
+(workerInstance 不再是null了)
+3. 將值寫入workerInstance
+
+[source,java]
+----
+
+public class MyWorker {
+
+  private int workerNumber;
+
+  public MyWorker (int workerNumber) {
+    this.workerNumber = workerNumber;
+  }
+
+  public int getWorkerNumber () {
+    return workerNumber;
+  }
+
+}
+
+public class Main{
+    public static void main(String[] args){
+    MyWorker workerInstance = new MyWorker (1);
+    }
+}
+----
+
+
+
+
+所以在JAVA中我們要建造 *唯一* 一個物件的時候，我們該怎麼做?
 
 這時候Single pattern是一個很好的方式
 
@@ -99,10 +132,11 @@ public class Counter {
 public class Main {
 
   public static void main(String[] args) {
+
     IntStream.range(0, 100).parallel()
-        .forEach(ele ->{
-          Counter counter=Counter.getInstance();
-          System.out.println(counter+":"+counter.getCount());
+        .forEach(ele -> {
+          Counter counter = Counter.getInstance();
+          System.out.println(counter + ":" + counter.getCount());
           counter.add();
         });
   }
@@ -113,4 +147,38 @@ public class Main {
 . 這是lazy loading 只有在getInstance被call至少一次 才會去創建uniqueInstance 如果從頭到尾沒有人call過 那uniqueInstance就不會被創建 省時間空間
 
 . 這份code在大多數情況可以 但如果是multi-thread的話 有可能thread1在if condition過了以後在創建實體的同時有另一個thread2進來 這樣就爆了 生出兩個instance
+
+.建立了一堆物件
+image::../images/chapter2/image-2024-04-24-23-40-56-795.png[]
+
+那麼這時候你應該會記得當初學到的某個關鍵字synchronized
+
+
+.Step5
+[source,java]
+----
+@Getter
+public class Counter {
+
+  private static Counter uniqueInstance;
+  private Integer count;
+
+  private Counter() {
+    System.out.println("init counter");
+    this.count = 0;
+  }
+
+  public static synchronized Counter getInstance() {
+    if (uniqueInstance == null) {
+      uniqueInstance = new Counter();
+    }
+
+    return uniqueInstance;
+  }
+
+  public void add() {
+    count++;
+  }
+}
+----
 
