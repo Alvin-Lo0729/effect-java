@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.22">
+<title>Effect Java</title>
+<style>
+/* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+
+@import url("//fonts.googleapis.com/css?family=Noto+Sans:300,600italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700");
+@import url(https://cdn.jsdelivr.net/gh/asciidoctor/asciidoctor@2.0/data/stylesheets/asciidoctor-default.css); /* Default asciidoc style framework - important */
+
+/* CUSTOMISATIONS */
+/* Change the values in root for quick customisation. If you want even more fine grain... venture further. */
+
+:root{
+--maincolor:#FFFFFF;
+--primarycolor:#2c3e50;
+--secondarycolor:#ba3925;
+--tertiarycolor: #186d7a;
+--sidebarbackground:#CCC;
+--linkcolor:#b71c1c;
+--linkcoloralternate:#f44336;
+--white:#FFFFFF;
+--black:#000000;
+}
+
+/* Text styles */
+h1{color:var(--primarycolor) !important;}
+h2,h3,h4,h5,h6{color:var(--secondarycolor) !important;}
+.title{color:var(--tertiarycolor) !important; font-family:"Noto Sans",sans-serif !important;font-style: normal !important; font-weight: normal !important;}
+p{font-family: "Noto Sans",sans-serif !important}
+
+/* Table styles */
+th{font-family: "Noto Sans",sans-serif !important}
+
+/* Responsiveness fixes */
+video {
+  max-width: 100%;
+}
+
+@media all and (max-width: 600px) {
+table {
+  width: 55vw!important;
+  font-size: 3vw;
+}
+
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+/*! Asciidoctor Tabs | Copyright (c) 2018-present Dan Allen | MIT License */
+.tabs {
+    margin-bottom: 1.25em;
+}
+
+.tablist > ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tablist > ul li {
+    align-items: center;
+    background-color: #fff;
+    cursor: pointer;
+    display: flex;
+    font-weight: bold;
+    line-height: 1.5;
+    padding: 0.25em 1em;
+    position: relative;
+}
+
+.tablist > ul li:focus-visible {
+    outline: none;
+}
+
+.tablist.ulist,
+.tablist.ulist > ul li {
+    margin: 0;
+}
+
+.tablist.ulist > ul li + li {
+    margin-left: 0.25em;
+}
+
+.tabs .tablist li::after {
+    content: "";
+    display: block;
+    height: 1px;
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+}
+
+.tabs.is-loading .tablist li:not(:first-child),
+.tabs:not(.is-loading) .tablist li:not(.is-selected) {
+    background-color: #f5f5f5;
+}
+
+.tabs.is-loading .tablist li:first-child::after,
+.tabs:not(.is-loading) .tablist li.is-selected::after {
+    background-color: #fff;
+}
+
+/*
+.tabs:not(.is-loading) .tablist li,
+.tabs:not(.is-loading) .tablist li::after {
+  transition: background-color 200ms ease-in-out;
+}
+*/
+
+.tablist > ul p {
+    line-height: inherit;
+    margin: 0;
+}
+
+.tabpanel {
+    background-color: #fff;
+    padding: 1.25em;
+}
+
+.tablist > ul li,
+.tabpanel {
+    border: 1px solid #dcdcdc;
+}
+
+.tablist > ul li {
+    border-bottom: 0;
+}
+
+.tabs.is-loading .tabpanel + .tabpanel,
+.tabs:not(.is-loading) .tabpanel.is-hidden {
+    display: none;
+}
+
+.tabpanel > :first-child {
+    margin-top: 0;
+}
+
+/* #content is a signature of the Asciidoctor standalone HTML output */
+#content .tabpanel > :last-child,
+#content .tabpanel > :last-child > :last-child,
+#content .tabpanel > :last-child > :last-child > li:last-child > :last-child {
+    margin-bottom: 0;
+}
+
+.tablecontainer {
+    overflow-x: auto;
+}
+
+#content .tablecontainer {
+    margin-bottom: 1.25em;
+}
+
+#content .tablecontainer > table.tableblock {
+    margin-bottom: 0;
+}
+</style>
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>Effect Java</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">大綱</div>
+<ul class="sectlevel1">
+<li><a href="#_chapter2_creating_and_destroying_object">1. Chapter2:  Creating and Destroying Object</a>
+<ul class="sectlevel2">
+<li><a href="#_item1_consider_static_factory_methods_instead_of_constructors_建議使用靜態工廠方法替代建構子">1.1. Item1: Consider static factory methods instead of constructors 建議使用靜態工廠方法替代建構子</a>
+<ul class="sectlevel3">
+<li><a href="#_優點一靜態工廠方法中有方法名字可以讓使用者理解">1.1.1. 優點一:靜態工廠方法中，有方法名字，可以讓使用者理解</a></li>
+<li><a href="#_優點二可以不需要在每次呼叫時都需要建立一個新的物件">1.1.2. 優點二:可以不需要在每次呼叫時，都需要建立一個新的物件</a></li>
+<li><a href="#_優點三可以返回其子類別物件">1.1.3. 優點三:可以返回其子類別物件</a></li>
+<li><a href="#_優點四可藉由方法參數判斷要返回的物件">1.1.4. 優點四:可藉由方法參數判斷，要返回的物件</a></li>
+<li><a href="#_優點五_方法返回的物件類別在編寫包含該靜態工廠方法的類別時可以不存在">1.1.5. 優點五: 方法返回的物件類別，在編寫包含該靜態工廠方法的類別時可以不存在</a></li>
+<li><a href="#_缺點_沒有提供constructors_所以不能被子類別化">1.1.6. 缺點: 沒有提供constructors ，所以不能被子類別化</a></li>
+<li><a href="#_缺點_比較難被programmers找到">1.1.7. 缺點: 比較難被programmers找到</a></li>
+</ul>
+</li>
+<li><a href="#_item2_consider_a_builder_when_faced_with_many_constructor_parameters_當建構子參數過多的時候建議用builder模式">1.2. Item2: Consider a builder when faced with many constructor parameters 當建構子參數過多的時候，建議用builder模式</a>
+<ul class="sectlevel3">
+<li><a href="#_介紹">1.2.1. 介紹</a></li>
+</ul>
+</li>
+<li><a href="#_item3_enforce_the_singleton_property_with_a_private_constructor_or_an_enum_type_使用private的建構子或enum_強化singleton">1.3. Item3: Enforce the singleton property with a private constructor or an enum type 使用private的建構子或enum 強化Singleton</a>
+<ul class="sectlevel3">
+<li><a href="#_介紹singleton">1.3.1. 介紹Singleton</a></li>
+<li><a href="#_回到主題用enum實作singleton">1.3.2. 回到主題用Enum實作Singleton</a></li>
+</ul>
+</li>
+<li><a href="#_item4_enforce_noninstantiability_with_a_private_constructor_透過private_constructor強化不可實例化的能力">1.4. Item4: Enforce noninstantiability with a private constructor 透過private constructor強化不可實例化的能力</a>
+<ul class="sectlevel3">
+<li><a href="#_說明">1.4.1. 說明</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_chapter2_creating_and_destroying_object">1. Chapter2:  Creating and Destroying Object</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_item1_consider_static_factory_methods_instead_of_constructors_建議使用靜態工廠方法替代建構子">1.1. Item1: Consider static factory methods instead of constructors 建議使用靜態工廠方法替代建構子</h3>
+<div class="sect3">
+<h4 id="_優點一靜態工廠方法中有方法名字可以讓使用者理解">1.1.1. 優點一:靜態工廠方法中，有方法名字，可以讓使用者理解</h4>
+<div class="literalblock">
+<div class="content">
+<pre>client看名字就知道應該call哪個工廠方法 而不是去看constructor的參數順序</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">範例1</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Data</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Student</span>{
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> name;
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> no;
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Float</span> weight;
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Float</span> height;
+
+    <span style="color:#088;font-weight:bold">private</span> Student(<span style="color:#0a8;font-weight:bold">String</span> name,<span style="color:#0a8;font-weight:bold">String</span> no){
+        <span style="color:#950">this</span>.name=name;
+        <span style="color:#950">this</span>.no=no;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Student createStudent(<span style="color:#0a8;font-weight:bold">String</span> name,<span style="color:#0a8;font-weight:bold">String</span> no){
+        <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">new</span> Student(name,no);
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_優點二可以不需要在每次呼叫時都需要建立一個新的物件">1.1.2. 優點二:可以不需要在每次呼叫時，都需要建立一個新的物件</h4>
+<div class="literalblock">
+<div class="content">
+<pre>你可以自己決定要給client舊的instance還是new新的 如果創造物件很貴的話 這點就很實用</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">範例-利用flyweight模式，減少記憶體損耗</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">abstract</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Weapon</span> {
+
+  <span style="color:#0a8;font-weight:bold">List</span>&lt;Diamond&gt; diamonds = <span style="color:#080;font-weight:bold">new</span> <span style="color:#0a8;font-weight:bold">ArrayList</span>&lt;&gt;();
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> addDiamond(Diamond diamond) {
+    diamonds.add(diamond);
+  }
+
+  <span style="color:#088;font-weight:bold">abstract</span> <span style="color:#339;font-weight:bold">void</span> attack();
+}
+
+<span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Sword</span> <span style="color:#088;font-weight:bold">extends</span> Weapon {
+
+  <span style="color:#007">@Override</span>
+  <span style="color:#339;font-weight:bold">void</span> attack() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Sword attack:</span><span style="color:#710">&quot;</span></span> + RandomTool.getRandomNumber(<span style="color:#00D">1</span>, <span style="color:#00D">100</span>) + <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20"> damage</span><span style="color:#710">&quot;</span></span>);
+
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(
+        <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Use </span><span style="color:#710">&quot;</span></span> + diamonds.stream().map(Diamond::getName).collect(Collectors.joining(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">,</span><span style="color:#710">&quot;</span></span>))
+            + <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20"> to add </span><span style="color:#710">&quot;</span></span> + diamonds.stream().mapToInt(Diamond::getAddAttack).sum() + <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20"> attack</span><span style="color:#710">&quot;</span></span>);
+
+
+  }
+}
+
+<span style="color:#007">@Data</span>
+<span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Diamond</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> name;
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> addAttack;
+
+  <span style="color:#088;font-weight:bold">public</span> Diamond(<span style="color:#0a8;font-weight:bold">String</span> name, <span style="color:#0a8;font-weight:bold">Integer</span> addAttack) {
+    <span style="color:#950">this</span>.name = name;
+    <span style="color:#950">this</span>.addAttack = addAttack;
+  }
+}
+
+
+<span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">DiamondFactory</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#0a8;font-weight:bold">Map</span>&lt;<span style="color:#0a8;font-weight:bold">String</span>, Diamond&gt; diamondMap = <span style="color:#080;font-weight:bold">new</span> <span style="color:#0a8;font-weight:bold">HashMap</span>&lt;&gt;();
+
+  <span style="color:#088;font-weight:bold">public</span> Diamond getDiamond(<span style="color:#0a8;font-weight:bold">String</span> diamondName) {
+    <span style="color:#080;font-weight:bold">if</span> (diamondMap.containsKey(diamondName)) {
+      <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Without create </span><span style="color:#710">&quot;</span></span> + diamondName + <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20"> diamond</span><span style="color:#710">&quot;</span></span>);
+      <span style="color:#080;font-weight:bold">return</span> diamondMap.get(diamondName);
+    } <span style="color:#080;font-weight:bold">else</span> {
+      <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Add </span><span style="color:#710">&quot;</span></span> + diamondName + <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20"> diamond</span><span style="color:#710">&quot;</span></span>);
+      Diamond newDiamond = <span style="color:#080;font-weight:bold">new</span> Diamond(diamondName, RandomTool.getRandomNumber(<span style="color:#00D">1</span>, <span style="color:#00D">100</span>));
+      diamondMap.put(diamondName, newDiamond);
+      <span style="color:#080;font-weight:bold">return</span> newDiamond;
+    }
+  }
+
+}
+
+<span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">RandomTool</span> {
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">int</span> getRandomNumber(<span style="color:#339;font-weight:bold">int</span> min, <span style="color:#339;font-weight:bold">int</span> max) {
+    <span style="color:#080;font-weight:bold">return</span> (<span style="color:#339;font-weight:bold">int</span>) ((<span style="color:#0a8;font-weight:bold">Math</span>.random() * (max - min)) + min);
+  }
+}
+
+
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Main</span> {
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+    Weapon sword = <span style="color:#080;font-weight:bold">new</span> Sword();
+    DiamondFactory diamondFactory = <span style="color:#080;font-weight:bold">new</span> DiamondFactory();
+    sword.addDiamond(diamondFactory.getDiamond(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Yellow</span><span style="color:#710">&quot;</span></span>));
+    sword.addDiamond(diamondFactory.getDiamond(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Blue</span><span style="color:#710">&quot;</span></span>));
+    sword.addDiamond(diamondFactory.getDiamond(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Black</span><span style="color:#710">&quot;</span></span>));
+    sword.addDiamond(diamondFactory.getDiamond(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Black</span><span style="color:#710">&quot;</span></span>));
+    sword.attack();
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_優點三可以返回其子類別物件">1.1.3. 優點三:可以返回其子類別物件</h4>
+<div class="listingblock">
+<div class="title">依照方法，返回子類別</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">ParentClass</span>{
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> ParentClass getParentObject() { <span style="color:#777">//靜態工廠方法 1</span>
+    <span style="color:#080;font-weight:bold">return</span> ParentClass.newInstance();
+  }
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> ParentClass getChildObject() { <span style="color:#777">//靜態工廠方法 2</span>
+    <span style="color:#080;font-weight:bold">return</span> ChildClass.newInstance();
+  }
+}
+<span style="color:#088;font-weight:bold">private</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">ChildClass</span> <span style="color:#088;font-weight:bold">extends</span> ParentClass{
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> ChildClass newInstance() {
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">new</span> ChildClass();
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">依照方法，返回子類別</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">interface</span> <span style="color:#B06;font-weight:bold">Runnable</span> {
+          <span style="color:#339;font-weight:bold">void</span> run();
+}
+
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">RunAnimal</span> {
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Dog dog = <span style="color:#080;font-weight:bold">new</span> Dog();
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Cat cat = <span style="color:#080;font-weight:bold">new</span> Cat();
+  <span style="color:#088;font-weight:bold">private</span> RunAnimal(){}
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#0a8;font-weight:bold">Runnable</span> getDog() {<span style="color:#777">//static factory method</span>
+    <span style="color:#080;font-weight:bold">return</span> dog;
+  }
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#0a8;font-weight:bold">Runnable</span> getCat(){<span style="color:#777">//static factory method</span>
+    <span style="color:#080;font-weight:bold">return</span> cat;
+  }
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Dog</span> <span style="color:#088;font-weight:bold">implements</span> <span style="color:#0a8;font-weight:bold">Runnable</span>{
+    <span style="color:#007">@Override</span> <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> run() {
+      <span style="color:#0a8;font-weight:bold">System</span>.out(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Running fast</span><span style="color:#710">&quot;</span></span>);
+    }
+  }
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Cat</span> <span style="color:#088;font-weight:bold">implements</span> <span style="color:#0a8;font-weight:bold">Runnable</span>{
+    <span style="color:#007">@Override</span> <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> run() {
+      <span style="color:#0a8;font-weight:bold">System</span>.out(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Running slow</span><span style="color:#710">&quot;</span></span>);
+    }
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_優點四可藉由方法參數判斷要返回的物件">1.1.4. 優點四:可藉由方法參數判斷，要返回的物件</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#0a8;font-weight:bold">Arrays</span>.stream(<span style="color:#080;font-weight:bold">new</span> <span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span>{<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">2</span><span style="color:#710">&quot;</span></span>,<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">d</span><span style="color:#710">&quot;</span></span>,<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">asdf</span><span style="color:#710">&quot;</span></span>});
+<span style="color:#0a8;font-weight:bold">Arrays</span>.stream(<span style="color:#080;font-weight:bold">new</span> <span style="color:#339;font-weight:bold">int</span><span style="color:#339;font-weight:bold">[]</span>{<span style="color:#00D">2</span>,<span style="color:#00D">3</span>,<span style="color:#00D">5</span>}).sum();
+<span style="color:#0a8;font-weight:bold">Arrays</span>.stream(<span style="color:#080;font-weight:bold">new</span> <span style="color:#339;font-weight:bold">long</span><span style="color:#339;font-weight:bold">[]</span>{<span style="color:#00D">2L</span>,<span style="color:#00D">3L</span>,<span style="color:#00D">5L</span>}).sum();
+<span style="color:#0a8;font-weight:bold">Arrays</span>.stream(<span style="color:#080;font-weight:bold">new</span> <span style="color:#339;font-weight:bold">double</span><span style="color:#339;font-weight:bold">[]</span>{<span style="color:#60E">2.3</span>,<span style="color:#60E">3.3</span>,<span style="color:#60E">5.4</span>}).sum();</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_優點五_方法返回的物件類別在編寫包含該靜態工廠方法的類別時可以不存在">1.1.5. 優點五: 方法返回的物件類別，在編寫包含該靜態工廠方法的類別時可以不存在</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">CurrencyFactory</span> {
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#0a8;font-weight:bold">Map</span>&lt;<span style="color:#0a8;font-weight:bold">String</span>, <span style="color:#0a8;font-weight:bold">Class</span>&lt;<span style="color:#0a8;font-weight:bold">Currency</span>&gt;&gt; currencyClasses = <span style="color:#080;font-weight:bold">new</span> <span style="color:#0a8;font-weight:bold">HashMap</span>&lt;&gt;();
+
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#0a8;font-weight:bold">Currency</span> createCurrency(<span style="color:#0a8;font-weight:bold">String</span> currencyCode) {
+        <span style="color:#0a8;font-weight:bold">Class</span>&lt;<span style="color:#0a8;font-weight:bold">Currency</span>&gt; currencyClass = currencyClasses.get(currencyCode);
+        <span style="color:#080;font-weight:bold">if</span> (currencyClass == <span style="color:#069">null</span>) {
+            <span style="color:#080;font-weight:bold">try</span> {
+                currencyClass = <span style="color:#0a8;font-weight:bold">Class</span>.forName(currencyCode);
+                currencyClasses.put(currencyCode, currencyClass);
+            } <span style="color:#080;font-weight:bold">catch</span> (<span style="color:#C00;font-weight:bold">ClassNotFoundException</span> e) {
+                <span style="color:#080;font-weight:bold">throw</span> <span style="color:#080;font-weight:bold">new</span> <span style="color:#C00;font-weight:bold">IllegalArgumentException</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Unsupported currency code: </span><span style="color:#710">&quot;</span></span> + currencyCode);
+            }
+        }
+
+        <span style="color:#080;font-weight:bold">try</span> {
+            <span style="color:#080;font-weight:bold">return</span> currencyClass.newInstance();
+        } <span style="color:#080;font-weight:bold">catch</span> (<span style="color:#C00;font-weight:bold">InstantiationException</span> | <span style="color:#C00;font-weight:bold">IllegalAccessException</span> e) {
+            <span style="color:#080;font-weight:bold">throw</span> <span style="color:#080;font-weight:bold">new</span> <span style="color:#C00;font-weight:bold">RuntimeException</span>(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Unable to create currency instance: </span><span style="color:#710">&quot;</span></span> + currencyCode, e);
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_缺點_沒有提供constructors_所以不能被子類別化">1.1.6. 缺點: 沒有提供constructors ，所以不能被子類別化</h4>
+
+</div>
+<div class="sect3">
+<h4 id="_缺點_比較難被programmers找到">1.1.7. 缺點: 比較難被programmers找到</h4>
+<div class="paragraph">
+<p>在Java Doc中他是與物件的方法放在一起，而不向建構子一樣是被分開的，甚至在使用時，也較難讓使用者一目了然，以下有建議的靜態方法名稱，這樣在使用時，較為清楚:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>from</strong> : 一個類型的轉換方法，他接受一個單一的方法參數，且返回該類型的相應實體物件，舉個例子:</p>
+<div class="literalblock">
+<div class="content">
+<pre>Date d = Date.from(instant)</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>of</strong> : 一個集合的方法，可接受數個方法參數，且會整合在一起，並返回對應的集合，舉個例子:</p>
+<div class="literalblock">
+<div class="content">
+<pre>Set&lt;Rank&gt; faceCards = EnumSet.of(JACK, QUEEN, KING);</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>valueOf</strong> : 一個比from與to較為粗略的替代方式，舉個例子:</p>
+<div class="literalblock">
+<div class="content">
+<pre>BigInteger prime = BigInteger.valueOf(Integer.MAX_VALUE);</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>create or newInstance</strong> : 和instance和getInstance一樣，只是該方法保證每次都會取得一個新的物件, 舉個例子:</p>
+<div class="literalblock">
+<div class="content">
+<pre>Object newArray = Array.newInstance(classObject, arrayLen);</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>getType</strong> : 像getInstance, 根據不同的類別並使用工廠方法取得。舉個例子:</p>
+<div class="literalblock">
+<div class="content">
+<pre>FileStore fs = Files.getFileStore(path);</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>newType</strong> : 像getInstance, 根據不同的類別並使用工廠方法取得。舉個例子:</p>
+<div class="literalblock">
+<div class="content">
+<pre>BufferedReader br = Files.newBufferedReader(path);</pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>type</strong> : 一個較為簡潔的方式替代getType或newType</p>
+<div class="literalblock">
+<div class="content">
+<pre>List&lt;Complaint&gt; litany = Collections.list(legacyLitany);</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>靜態工廠方法與建構子都有它們的用途，了解他們的相對優勢，是有好處的。 +</p>
+</div>
+<div class="paragraph">
+<p>通常狀況下靜態工廠更受歡迎，所以在建立公共的建構子時，考慮一下靜態工廠的建立方式</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_item2_consider_a_builder_when_faced_with_many_constructor_parameters_當建構子參數過多的時候建議用builder模式">1.2. Item2: Consider a builder when faced with many constructor parameters 當建構子參數過多的時候，建議用builder模式</h3>
+<div class="sect3">
+<h4 id="_介紹">1.2.1. 介紹</h4>
+<div class="paragraph">
+<p>靜態工廠與建構子都有一個共通的限制，他不能很好的擴展到大量的可選參數</p>
+</div>
+<div class="listingblock">
+<div class="title">範例</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Employee</span> {
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> lastName;<span style="color:#777">// required</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> firstName;<span style="color:#777">// required</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> gender;<span style="color:#777">// required</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> age;<span style="color:#777">// optional</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> tel;<span style="color:#777">// optional</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> address;<span style="color:#777">// optional</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Boolean</span> single;<span style="color:#777">// optional</span>
+
+    <span style="color:#088;font-weight:bold">public</span> Employee(<span style="color:#0a8;font-weight:bold">String</span> lastName, <span style="color:#0a8;font-weight:bold">String</span> firstName, <span style="color:#0a8;font-weight:bold">String</span> gender,
+            <span style="color:#0a8;font-weight:bold">Integer</span> age, <span style="color:#0a8;font-weight:bold">Integer</span> tel, <span style="color:#0a8;font-weight:bold">String</span> address, <span style="color:#0a8;font-weight:bold">Boolean</span> single) {
+        <span style="color:#950">this</span>.lastName = lastName;
+        <span style="color:#950">this</span>.firstName = firstName;
+        <span style="color:#950">this</span>.gender = gender;
+        <span style="color:#950">this</span>.age = age;
+        <span style="color:#950">this</span>.tel = tel;
+        <span style="color:#950">this</span>.address = address;
+        <span style="color:#950">this</span>.single = single;
+    }
+
+ <span style="color:#088;font-weight:bold">public</span> Employee(<span style="color:#0a8;font-weight:bold">String</span> lastName, <span style="color:#0a8;font-weight:bold">String</span> firstName, <span style="color:#0a8;font-weight:bold">String</span> gender) {
+        <span style="color:#950">this</span>.lastName = lastName;
+        <span style="color:#950">this</span>.firstName = firstName;
+        <span style="color:#950">this</span>.gender = gender;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> Employee(<span style="color:#0a8;font-weight:bold">String</span> lastName, <span style="color:#0a8;font-weight:bold">String</span> firstName, <span style="color:#0a8;font-weight:bold">String</span> gender,<span style="color:#0a8;font-weight:bold">Integer</span> age){
+        <span style="color:#950">this</span>.lastName = lastName;
+        <span style="color:#950">this</span>.firstName = firstName;
+        <span style="color:#950">this</span>.gender = gender;
+        <span style="color:#950">this</span>.age = age;
+    }
+    <span style="color:#088;font-weight:bold">public</span> Employee(<span style="color:#0a8;font-weight:bold">String</span> lastName, <span style="color:#0a8;font-weight:bold">String</span> firstName, <span style="color:#0a8;font-weight:bold">String</span> gender,<span style="color:#0a8;font-weight:bold">Integer</span> age,<span style="color:#0a8;font-weight:bold">Integer</span> tel){
+        <span style="color:#950">this</span>.lastName = lastName;
+        <span style="color:#950">this</span>.firstName = firstName;
+        <span style="color:#950">this</span>.gender = gender;
+        <span style="color:#950">this</span>.age = age;
+        <span style="color:#950">this</span>.tel = tel;
+    }
+    <span style="color:#088;font-weight:bold">public</span> Employee(<span style="color:#0a8;font-weight:bold">String</span> lastName, <span style="color:#0a8;font-weight:bold">String</span> firstName, <span style="color:#0a8;font-weight:bold">String</span> gender,<span style="color:#0a8;font-weight:bold">Integer</span> age,<span style="color:#0a8;font-weight:bold">Integer</span> tel){
+        Employee(<span style="color:#0a8;font-weight:bold">String</span> lastName, <span style="color:#0a8;font-weight:bold">String</span> firstName, <span style="color:#0a8;font-weight:bold">String</span> gender,<span style="color:#0a8;font-weight:bold">Integer</span> age,<span style="color:#0a8;font-weight:bold">Integer</span> tel,<span style="color:#069">null</span>,<span style="color:#069">null</span>,<span style="color:#069">null</span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>以上的方式會有以下問題</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>無法快速了解，如果不點進去Employee class裡面查看，是不會知道傳進去的參數定義。</p>
+</li>
+<li>
+<p>有序性，一定要按照建構函式裡定的順序設值。</p>
+</li>
+<li>
+<p>不太優雅，有時候必須為了滿足參數傳了null。</p>
+</li>
+<li>
+<p>沒有彈性，後來需求增加多了一個email，就在constructor裡面往後加，然後去找出所有使用到的地方去修改</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>這時候我們用另一種方式</p>
+</div>
+<div class="listingblock">
+<div class="title">範例二</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Employee</span> {
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> lastName;<span style="color:#777">// required</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> firstName;<span style="color:#777">// required</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> gender;<span style="color:#777">// required</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> age;<span style="color:#777">// optional</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> tel;<span style="color:#777">// optional</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> address;<span style="color:#777">// optional</span>
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Boolean</span> single;<span style="color:#777">// optional</span>
+}
+
+<span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Test</span>{
+
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> test1(){
+        Employee emp=<span style="color:#080;font-weight:bold">new</span> Employee();
+        emp.setLastName(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">a</span><span style="color:#710">&quot;</span></span>);
+        emp.setFirstName(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">b</span><span style="color:#710">&quot;</span></span>);
+        emp.setGender(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">c</span><span style="color:#710">&quot;</span></span>);
+        emp.setAge(<span style="color:#00D">5</span>);
+        emp.setTel(<span style="color:#00D">6</span>);
+        emp.setAddress(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">d</span><span style="color:#710">&quot;</span></span>);
+        emp.setSingle(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">e</span><span style="color:#710">&quot;</span></span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>這個方式下有兩個缺點</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>太自由了，例如有個開發者少設置了一個必要欄位，如果又沒有嚴謹的驗證測試，上線可能會導致runtime exception。</p>
+</li>
+<li>
+<p>inconsistent state問題，多執行緒的環境下同時操作同一個物件，執行緒B把值改掉了導致執行緒A處理錯誤，也因為多執行緒環境無規律不好重現問題，有時候你需要使它成為不可變物件 (Immutable object)才行。</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>因此我們來看本章推薦的建造者模式(builder pattern)</p>
+</div>
+<div class="listingblock">
+<div class="title">builder pattern</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Data</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Employee</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> lastName;<span style="color:#777">// required</span>
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> firstName;<span style="color:#777">// required</span>
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> gender;<span style="color:#777">// required</span>
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> age;<span style="color:#777">// optional</span>
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> tel;<span style="color:#777">// optional</span>
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> address;<span style="color:#777">// optional</span>
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Boolean</span> single;<span style="color:#777">// optional</span>
+
+  <span style="color:#088;font-weight:bold">public</span> Employee(Builder builder) {
+    <span style="color:#950">this</span>.lastName = Objects.requireNonNull(builder.lastName);
+    <span style="color:#950">this</span>.firstName = Objects.requireNonNull(builder.firstName);
+    <span style="color:#950">this</span>.gender = StringUtils.isNotEmpty(builder.gender) ? builder.gender.toUpperCase() : <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#710">&quot;</span></span>;
+    <span style="color:#950">this</span>.age = builder.age;
+    <span style="color:#950">this</span>.tel = builder.tel;
+    <span style="color:#950">this</span>.address = Objects.toString(builder.address, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Taiwan</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#950">this</span>.single = builder.single;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Builder</span> {
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#0a8;font-weight:bold">String</span> lastName;
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#0a8;font-weight:bold">String</span> firstName;
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#0a8;font-weight:bold">String</span> gender;
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> age;
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> tel;
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">String</span> address;
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Boolean</span> single;
+
+    <span style="color:#088;font-weight:bold">public</span> Builder(<span style="color:#0a8;font-weight:bold">String</span> lastName, <span style="color:#0a8;font-weight:bold">String</span> firstName, <span style="color:#0a8;font-weight:bold">String</span> gender) {
+      <span style="color:#950">this</span>.lastName = lastName;
+      <span style="color:#950">this</span>.firstName = firstName;
+      <span style="color:#950">this</span>.gender = gender;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> Builder age(<span style="color:#0a8;font-weight:bold">Integer</span> age) {
+      <span style="color:#950">this</span>.age = age;
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#950">this</span>;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> Builder tel(<span style="color:#0a8;font-weight:bold">Integer</span> tel) {
+      <span style="color:#950">this</span>.tel = tel;
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#950">this</span>;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> Builder address(<span style="color:#0a8;font-weight:bold">String</span> address) {
+      <span style="color:#950">this</span>.address = address;
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#950">this</span>;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> Builder single(<span style="color:#0a8;font-weight:bold">Boolean</span> single) {
+      <span style="color:#950">this</span>.single = single;
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#950">this</span>;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> Employee build() {
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">new</span> Employee(<span style="color:#950">this</span>);
+    }
+  }
+}
+
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Main</span> {
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+    Employee employee = <span style="color:#080;font-weight:bold">new</span> Employee.Builder(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">a</span><span style="color:#710">&quot;</span></span>, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">b</span><span style="color:#710">&quot;</span></span>, <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">c</span><span style="color:#710">&quot;</span></span>)
+        .age(<span style="color:#00D">5</span>).address(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">cdd</span><span style="color:#710">&quot;</span></span>).build();
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>使用Builder Pattern，可以將類別變為可變形直，且避免掉建構工廠與用setter帶來的問題</p>
+</div>
+<div class="listingblock">
+<div class="title">繼承的方式</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">abstract</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Pizza</span> {
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">enum</span> Topping {HAM, MUSHROOM, ONION, PEPPER, SAUSAGE}
+
+  <span style="color:#088;font-weight:bold">final</span> <span style="color:#0a8;font-weight:bold">Set</span>&lt;Topping&gt; toppings;
+
+  <span style="color:#088;font-weight:bold">abstract</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Builder</span>&lt;T <span style="color:#088;font-weight:bold">extends</span> Builder&lt;T&gt;&gt; {
+
+    <span style="color:#0a8;font-weight:bold">EnumSet</span>&lt;Topping&gt; toppings = <span style="color:#0a8;font-weight:bold">EnumSet</span>.noneOf(Topping.class);
+
+    <span style="color:#088;font-weight:bold">public</span> T addTopping(Topping topping) {
+      toppings.add(topping);
+      <span style="color:#080;font-weight:bold">return</span> self();
+    }
+
+    <span style="color:#088;font-weight:bold">abstract</span> Pizza build();
+
+    <span style="color:#088;font-weight:bold">protected</span> <span style="color:#088;font-weight:bold">abstract</span> T self();
+  }
+
+  Pizza(Builder&lt;?&gt; builder) {
+    toppings = builder.toppings.clone();
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">素食PIZZA</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Getter</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">VegetablePizza</span> <span style="color:#088;font-weight:bold">extends</span> Pizza {
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">enum</span> Size {
+    SMALL, MEDIUM, LARGE
+  }
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">final</span> Size size;
+
+
+  <span style="color:#088;font-weight:bold">private</span> VegetablePizza(Builder builder) {
+    <span style="color:#950">super</span>(builder);
+    <span style="color:#950">this</span>.size = builder.size;
+  }
+
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Builder</span> <span style="color:#088;font-weight:bold">extends</span> Pizza.Builder&lt;Builder&gt; {
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">final</span> Size size;
+
+    <span style="color:#088;font-weight:bold">public</span> Builder(Size size) {
+      <span style="color:#950">this</span>.size = Objects.requireNonNull(size);
+    }
+
+    <span style="color:#007">@Override</span>
+    Pizza build() {
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">new</span> VegetablePizza(<span style="color:#950">this</span>);
+    }
+
+    <span style="color:#007">@Override</span>
+    <span style="color:#088;font-weight:bold">protected</span> Builder self() {
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#950">this</span>;
+    }
+
+
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Calzone Pizza</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Getter</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">CalzonePizza</span> <span style="color:#088;font-weight:bold">extends</span> Pizza {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#339;font-weight:bold">boolean</span> sauceInside;
+
+  <span style="color:#088;font-weight:bold">public</span> CalzonePizza(Builder builder) {
+    <span style="color:#950">super</span>(builder);
+    <span style="color:#950">this</span>.sauceInside = builder.sauceInside;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Builder</span> <span style="color:#088;font-weight:bold">extends</span> Pizza.Builder&lt;Builder&gt; {
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#339;font-weight:bold">boolean</span> sauceInside;
+
+    <span style="color:#088;font-weight:bold">public</span> Builder sauceInside(<span style="color:#339;font-weight:bold">boolean</span> sauceInside) {
+      <span style="color:#950">this</span>.sauceInside = sauceInside;
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#950">this</span>;
+    }
+
+    <span style="color:#007">@Override</span>
+    Pizza build() {
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">new</span> CalzonePizza(<span style="color:#950">this</span>);
+    }
+
+    <span style="color:#007">@Override</span>
+    <span style="color:#088;font-weight:bold">protected</span> Builder self() {
+      <span style="color:#080;font-weight:bold">return</span> <span style="color:#950">this</span>;
+    }
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">用法</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Main</span> {
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+    Pizza pizza = <span style="color:#080;font-weight:bold">new</span> VegetablePizza.Builder(Size.MEDIUM).addTopping(Topping.MUSHROOM).build();
+
+    Pizza pizzaA = <span style="color:#080;font-weight:bold">new</span> CalzonePizza.Builder(Size.LARGE).addTopping(Topping.MUSHROOM)
+        .addTopping(Topping.HAM).sauceInside(<span style="color:#069">true</span>).build();
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_item3_enforce_the_singleton_property_with_a_private_constructor_or_an_enum_type_使用private的建構子或enum_強化singleton">1.3. Item3: Enforce the singleton property with a private constructor or an enum type 使用private的建構子或enum 強化Singleton</h3>
+<div class="sect3">
+<h4 id="_介紹singleton">1.3.1. 介紹Singleton</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>先了解一下JVM怎麼建立物件</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>分配記憶體的空間</p>
+</li>
+<li>
+<p>將分配到的記憶體的空間(記憶體的空間的地址)給予實例workerInstance<br>
+(workerInstance 不再是null了)</p>
+</li>
+<li>
+<p>將值寫入workerInstance</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">MyWorker</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#339;font-weight:bold">int</span> workerNumber;
+
+  <span style="color:#088;font-weight:bold">public</span> MyWorker (<span style="color:#339;font-weight:bold">int</span> workerNumber) {
+    <span style="color:#950">this</span>.workerNumber = workerNumber;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">int</span> getWorkerNumber () {
+    <span style="color:#080;font-weight:bold">return</span> workerNumber;
+  }
+
+}
+
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Main</span>{
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args){
+    MyWorker workerInstance = <span style="color:#080;font-weight:bold">new</span> MyWorker (<span style="color:#00D">1</span>);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>所以在JAVA中我們要建造 <strong>唯一</strong> 一個物件的時候，我們該怎麼做?</p>
+</div>
+<div class="paragraph">
+<p>這時候Single pattern是一個很好的方式</p>
+</div>
+<div class="listingblock">
+<div class="title">Step1</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Getter</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span>{
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+    <span style="color:#088;font-weight:bold">private</span> Counter(){
+        <span style="color:#950">this</span>.count=<span style="color:#00D">0</span>;
+    }
+
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> add(){
+        count++;
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Step2</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Getter</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count = <span style="color:#00D">0</span>;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">new</span> Counter();
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> add() {
+    count++;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Step3</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Getter</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+    <span style="color:#950">this</span>.count = <span style="color:#00D">0</span>;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">return</span> <span style="color:#080;font-weight:bold">new</span> Counter();
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> add() {
+    count++;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Step4</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Getter</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+   <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> Counter uniqueInstance;
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">init counter</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#950">this</span>.count = <span style="color:#00D">0</span>;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">if</span> (uniqueInstance == <span style="color:#069">null</span>) {
+      uniqueInstance = <span style="color:#080;font-weight:bold">new</span> Counter();
+    }
+    <span style="color:#080;font-weight:bold">return</span> uniqueInstance;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> add() {
+    count++;
+  }
+}
+
+
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Main</span> {
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+
+    IntStream.range(<span style="color:#00D">0</span>, <span style="color:#00D">100</span>).parallel()
+        .forEach(ele -&gt; {
+          Counter counter = Counter.getInstance();
+          <span style="color:#0a8;font-weight:bold">System</span>.out.println(counter + <span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">:</span><span style="color:#710">&quot;</span></span> + counter.getCount());
+          counter.add();
+        });
+  }
+}</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>這是lazy loading 只有在getInstance被call至少一次 才會去創建uniqueInstance 如果從頭到尾沒有人call過 那uniqueInstance就不會被創建 省時間空間</p>
+</li>
+<li>
+<p>這份code在大多數情況可以 但如果是multi-thread的話 有可能thread1在if condition過了以後在創建實體的同時有另一個thread2進來 這樣就爆了 生出兩個instance</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/chapter2/image-2024-04-24-23-40-56-795.png" alt="image 2024 04 24 23 40 56 795">
+</div>
+<div class="title">Figure 1. 建立了一堆物件</div>
+</div>
+<div class="paragraph">
+<p>那麼這時候你應該會記得當初學到的關鍵字synchronized</p>
+</div>
+<div class="listingblock">
+<div class="title">Step5</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#007">@Getter</span>
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> Counter uniqueInstance;
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">init counter</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#950">this</span>.count = <span style="color:#00D">0</span>;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">synchronized</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">if</span> (uniqueInstance == <span style="color:#069">null</span>) {
+      uniqueInstance = <span style="color:#080;font-weight:bold">new</span> Counter();
+    }
+
+    <span style="color:#080;font-weight:bold">return</span> uniqueInstance;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">synchronized</span> <span style="color:#0a8;font-weight:bold">Integer</span> add() {
+    <span style="color:#080;font-weight:bold">return</span> count++;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/chapter2/image-2024-04-25-19-59-15-828.png" alt="image 2024 04 25 19 59 15 828">
+</div>
+<div class="title">Figure 2. 似乎有照預想的執行了</div>
+</div>
+<div class="paragraph">
+<p>但是其實synchronized是一個效率很低的方法而，而且非常的吃資源，因為裡面只有一個執行緒能夠執行</p>
+</div>
+<div class="paragraph">
+<p>那麼還有一個較為簡易的方法</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> Counter uniqueInstance = <span style="color:#080;font-weight:bold">new</span> Counter();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>JVM會在系統啟動時，便先建立好這個類別變數，但這樣會造成一個問題便是，如果都沒有人使用，那麼則會造成資源的浪費</p>
+</div>
+<div class="paragraph">
+<p>那麼最佳解則是，當我們想要使用的時候，發現他還沒有被建立則建立，反之則使用原本的類別物件，且不用綁死synchronized</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> Counter uniqueInstance ;
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">init counter</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#950">this</span>.count = <span style="color:#00D">0</span>;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">if</span>(uniqueInstance == <span style="color:#069">null</span>){
+      <span style="color:#088;font-weight:bold">synchronized</span>(Counter.class){
+        uniqueInstance = <span style="color:#080;font-weight:bold">new</span> Counter();
+      }
+    }
+    <span style="color:#080;font-weight:bold">return</span> uniqueInstance;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">synchronized</span> <span style="color:#0a8;font-weight:bold">Integer</span> add() {
+    <span style="color:#080;font-weight:bold">return</span> ++count;
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/chapter2/image-2024-04-25-20-26-21-395.png" alt="image 2024 04 25 20 26 21 395">
+</div>
+<div class="title">Figure 3. 還是出意外了</div>
+</div>
+<div class="paragraph">
+<p>以上程式的部分是指進去getInstance，先不用getInstance綁住，當發現uniqueInstance是NULL的時候，才block住</p>
+</div>
+<div class="paragraph">
+<p>這樣還是會有race condition的問題 如果第一個thread正要new的時候 第二個thread到if 發現沒東西 進if condition 要synchronized之前 第一個thread因為還在生所以第二個thread被block住 第一個thread生完後release lock 換第二個thread進場new 那這樣就會有兩個</p>
+</div>
+<div class="paragraph">
+<p>解法就是當第二個thread拿到鎖之後(也就是synchronized裡) 再確認一次instance還是不是null</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> Counter uniqueInstance ;
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">init counter</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#950">this</span>.count = <span style="color:#00D">0</span>;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">if</span>(uniqueInstance == <span style="color:#069">null</span>){
+      <span style="color:#088;font-weight:bold">synchronized</span>(Counter.class){
+        <span style="color:#080;font-weight:bold">if</span>(uniqueInstance == <span style="color:#069">null</span>){
+          uniqueInstance = <span style="color:#080;font-weight:bold">new</span> Counter();
+        }
+      }
+    }
+    <span style="color:#080;font-weight:bold">return</span> uniqueInstance;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">synchronized</span> <span style="color:#0a8;font-weight:bold">Integer</span> add() {
+    <span style="color:#080;font-weight:bold">return</span> ++count;
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>就是當thread1正在new的時候 他有可能先跟記憶體allocate了一些空間後 才開始執行constructor(建這個Singleton instance需要的東西) 所以有可能thread1還在跑constructor的時候thread2進到第一個if發現不是null 就直接回傳給別人 別人就直接開始用 但是thread1根本就construct到一半而已</p>
+</div>
+<div class="paragraph">
+<p>這時候只需要把這個instance加一個精美的關鍵字 volatile</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">volatile</span> <span style="color:#088;font-weight:bold">static</span> Counter uniqueInstance ;
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">init counter</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#950">this</span>.count = <span style="color:#00D">0</span>;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">if</span>(uniqueInstance == <span style="color:#069">null</span>){
+      <span style="color:#088;font-weight:bold">synchronized</span>(Counter.class){
+        <span style="color:#080;font-weight:bold">if</span>(uniqueInstance == <span style="color:#069">null</span>){
+          uniqueInstance = <span style="color:#080;font-weight:bold">new</span> Counter();
+        }
+      }
+    }
+    <span style="color:#080;font-weight:bold">return</span> uniqueInstance;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">synchronized</span> <span style="color:#0a8;font-weight:bold">Integer</span> add() {
+    <span style="color:#080;font-weight:bold">return</span> ++count;
+  }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>volatile通常出現在multi-threading的code裡面 代表著這個變數很不穩定 加上這個變數之後給了我們兩個保證</p>
+</div>
+<div class="paragraph">
+<p>1.對於這個變數的寫 會保證寫進memory(所以其他thread會看到最新的值) 對於這個變數的讀 會保證從memory讀</p>
+</div>
+<div class="paragraph">
+<p>2.JVM 跑compiler optimization的時候 不可以隨便改變volatile變數的順序</p>
+</div>
+<div class="paragraph">
+<p><strong>Singleton</strong></p>
+</div>
+<div class="paragraph">
+<p>保證一個class只會有最多一個instance 同時提供一個存取方法</p>
+</div>
+<div class="paragraph">
+<p>或者是寫成以下方法</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Counter</span> {
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#0a8;font-weight:bold">Integer</span> count;
+
+  <span style="color:#088;font-weight:bold">private</span> Counter() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">init counter</span><span style="color:#710">&quot;</span></span>);
+    <span style="color:#950">this</span>.count = <span style="color:#00D">0</span>;
+  }
+
+  <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">UniqueInstanceHolder</span> {
+
+    <span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Counter uniqueInstance = <span style="color:#080;font-weight:bold">new</span> Counter();
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Counter getInstance() {
+    <span style="color:#080;font-weight:bold">return</span> UniqueInstanceHolder.uniqueInstance;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">synchronized</span> <span style="color:#0a8;font-weight:bold">Integer</span> add() {
+    <span style="color:#080;font-weight:bold">return</span> ++count;
+  }
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_回到主題用enum實作singleton">1.3.2. 回到主題用Enum實作Singleton</h4>
+<div class="paragraph">
+<p>經過上述講解，在開始前稍微說一下</p>
+</div>
+<div class="listingblock">
+<div class="title">常見的第一個方法 eager-loading</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Elvis</span> {
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Elvis INSTANCE = <span style="color:#080;font-weight:bold">new</span> Elvis();
+
+  <span style="color:#088;font-weight:bold">private</span> Elvis() {
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> leaveTheBuilding() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Whoa baby, I'm outta here!</span><span style="color:#710">&quot;</span></span>);
+  }
+}
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+  Elvis elvis = Elvis.INSTANCE;
+  elvis.leaveTheBuilding();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">常見的第二個方法 靜態工廠</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Elvis</span> {
+<span style="color:#088;font-weight:bold">private</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Elvis INSTANCE = <span style="color:#080;font-weight:bold">new</span> Elvis();
+
+  <span style="color:#088;font-weight:bold">private</span> Elvis() {
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> Elvis getInstance() {
+    <span style="color:#080;font-weight:bold">return</span> INSTANCE;
+  }
+
+  <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> leaveTheBuilding() {
+    <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Whoa baby, I'm outta here!</span><span style="color:#710">&quot;</span></span>);
+  }
+}
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+  Elvis elvis = Elvis.getInstance();
+  elvis.leaveTheBuilding();
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">最簡單的方法</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#339;font-weight:bold">enum</span> Suit
+{
+    CLUB, SPADE, HEART, DIAMOND;
+
+    <span style="color:#088;font-weight:bold">private</span> Suit()
+    {
+        <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Constructor called for : </span><span style="color:#710">&quot;</span></span> +
+        <span style="color:#950">this</span>.toString());
+    }
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> suitInfo()
+    {
+        <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Universal Suit</span><span style="color:#710">&quot;</span></span>);
+    }
+}
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args) {
+  Suit s1 = Suit.CLUB;
+  <span style="color:#0a8;font-weight:bold">System</span>.out.println(s1);
+  s1.suitInfo();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>你可以把enum 想成以下的樣子</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#0a8;font-weight:bold">Class</span> Suit
+{
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Suit CLUB = <span style="color:#080;font-weight:bold">new</span> Suit();
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Suit SPADE = <span style="color:#080;font-weight:bold">new</span> Suit();
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Suit HEART = <span style="color:#080;font-weight:bold">new</span> Suit();
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#088;font-weight:bold">final</span> Suit DIAMOND = <span style="color:#080;font-weight:bold">new</span> Suit();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>那麼只有在enum在被呼叫的時候，才會被call 建構子</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#339;font-weight:bold">enum</span> Suit
+{
+    CLUB, SPADE, HEART, DIAMOND;
+
+    <span style="color:#088;font-weight:bold">private</span> Suit()
+    {
+        <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Constructor called for : </span><span style="color:#710">&quot;</span></span> +
+        <span style="color:#950">this</span>.toString());
+    }
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">void</span> suitInfo()
+    {
+        <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">Universal Suit</span><span style="color:#710">&quot;</span></span>);
+    }
+}
+
+<span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">Test</span>
+{
+    <span style="color:#088;font-weight:bold">public</span> <span style="color:#088;font-weight:bold">static</span> <span style="color:#339;font-weight:bold">void</span> main(<span style="color:#0a8;font-weight:bold">String</span><span style="color:#339;font-weight:bold">[]</span> args)
+    {
+        <span style="color:#0a8;font-weight:bold">System</span>.out.println(<span style="background-color:hsla(0,100%,50%,0.05)"><span style="color:#710">&quot;</span><span style="color:#D20">1234</span><span style="color:#710">&quot;</span></span>);
+        Suit s1 = Suit.CLUB;
+        <span style="color:#0a8;font-weight:bold">System</span>.out.println(s1);
+        s1.suitInfo();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="images/chapter2/image-2024-04-25-20-47-39-189.png" alt="image 2024 04 25 20 47 39 189">
+</div>
+</div>
+<div class="paragraph">
+<p>而且enum還支援序列化</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_item4_enforce_noninstantiability_with_a_private_constructor_透過private_constructor強化不可實例化的能力">1.4. Item4: Enforce noninstantiability with a private constructor 透過private constructor強化不可實例化的能力</h3>
+<div class="sect3">
+<h4 id="_說明">1.4.1. 說明</h4>
+<div class="paragraph">
+<p>在撰寫程式的時候，很多會用到靜態的方法和靜態的類別，如java.lang.Math、java.util.Arrays，處裡一些數學與資料上的問題。</p>
+</div>
+<div class="paragraph">
+<p>這樣的工具類別不希望被實作，因為完全沒有意義，然而在沒有撰寫建構子的狀況下，編譯器會提供一個public、no argument的construct</p>
+</div>
+<div class="paragraph">
+<p>然而要如何避免這種狀況呢?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span style="color:#088;font-weight:bold">public</span> <span style="color:#339;font-weight:bold">class</span> <span style="color:#B06;font-weight:bold">UtiltyClass</span>{
+    <span style="color:#088;font-weight:bold">private</span> UtiltyClass(){
+        <span style="color:#080;font-weight:bold">throw</span> <span style="color:#080;font-weight:bold">new</span> <span style="color:#C00;font-weight:bold">AssertionError</span>();
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>由於construct是private等級的，所以無法直接建構出來，避免了該類別被instance的可能，且無法被繼承</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+</div>
+</div>
+<script>
+;(function () { /*! Asciidoctor Tabs | Copyright (c) 2018-present Dan Allen | MIT License */
+  'use strict'
+
+  var config = (document.currentScript || {}).dataset || {}
+  var forEach = Array.prototype.forEach
+
+  init(document.querySelectorAll('.tabs'))
+
+  function init (tabsBlocks) {
+    if (!tabsBlocks.length) return
+    forEach.call(tabsBlocks, function (tabs) {
+      var syncIds = tabs.classList.contains('is-sync') ? {} : undefined
+      var tablist = tabs.querySelector('.tablist ul')
+      tablist.setAttribute('role', 'tablist')
+      var start
+      forEach.call(tablist.querySelectorAll('li'), function (tab, idx) {
+        tab.tabIndex = -1
+        tab.setAttribute('role', tab.classList.add('tab') || 'tab')
+        var id, anchor, syncId
+        if (!(id = tab.id) && (anchor = tab.querySelector('a[id]'))) {
+          id = tab.id = anchor.parentNode.removeChild(anchor).id
+        }
+        var panel = id && tabs.querySelector('.tabpanel[aria-labelledby~="' + id + '"]')
+        if (!panel) return idx ? undefined : toggleSelected(tab, true) // invalid state
+        syncIds && (((syncId = tab.textContent.trim()) in syncIds) ? (syncId = undefined) : true) &&
+        (syncIds[(tab.dataset.syncId = syncId)] = tab)
+        idx || (syncIds && (start = { tab: tab, panel: panel })) ? toggleHidden(panel, true) : toggleSelected(tab, true)
+        tab.setAttribute('aria-controls', panel.id)
+        panel.setAttribute('role', 'tabpanel')
+        var onClick = syncId === undefined ? activateTab : activateTabSync
+        tab.addEventListener('click', onClick.bind({ tabs: tabs, tab: tab, panel: panel }))
+      })
+      if (!tabs.closest('.tabpanel')) {
+        forEach.call(tabs.querySelectorAll('.tabpanel table.tableblock'), function (table) {
+          var container = Object.assign(document.createElement('div'), { className: 'tablecontainer' })
+          table.parentNode.insertBefore(container, table).appendChild(table)
+        })
+      }
+      if (start) {
+        var syncGroupId
+        for (var i = 0, lst = tabs.classList, len = lst.length, className; i !== len; i++) {
+          if (!(className = lst.item(i)).startsWith('data-sync-group-id=')) continue
+          tabs.dataset.syncGroupId = syncGroupId = lst.remove(className) || className.slice(19).replace(/\u00a0/g, ' ')
+          break
+        }
+        if (syncGroupId === undefined) tabs.dataset.syncGroupId = syncGroupId = Object.keys(syncIds).sort().join('|')
+        var preferredSyncId = 'syncStorageKey' in config &&
+          window[(config.syncStorageScope || 'local') + 'Storage'].getItem(config.syncStorageKey + '-' + syncGroupId)
+        var tab = preferredSyncId && syncIds[preferredSyncId]
+        tab && Object.assign(start, { tab: tab, panel: document.getElementById(tab.getAttribute('aria-controls')) })
+        toggleSelected(start.tab, true) || toggleHidden(start.panel, false)
+      }
+    })
+    onHashChange()
+    toggleClassOnEach(tabsBlocks, 'is-loading', 'remove')
+    window.setTimeout(toggleClassOnEach.bind(null, tabsBlocks, 'is-loaded', 'add'), 0)
+    window.addEventListener('hashchange', onHashChange)
+  }
+
+  function activateTab (e) {
+    var tab = this.tab
+    var tabs = this.tabs || (this.tabs = tab.closest('.tabs'))
+    var panel = this.panel || (this.panel = document.getElementById(tab.getAttribute('aria-controls')))
+    querySelectorWithSiblings(tabs, '.tablist .tab', 'tab').forEach(function (el) {
+      toggleSelected(el, el === tab)
+    })
+    querySelectorWithSiblings(tabs, '.tabpanel', 'tabpanel').forEach(function (el) {
+      toggleHidden(el, el !== panel)
+    })
+    if (!this.isSync && 'syncStorageKey' in config && 'syncGroupId' in tabs.dataset) {
+      var storageKey = config.syncStorageKey + '-' + tabs.dataset.syncGroupId
+      window[(config.syncStorageScope || 'local') + 'Storage'].setItem(storageKey, tab.dataset.syncId)
+    }
+    if (!e) return
+    var loc = window.location
+    var hashIdx = loc.hash ? loc.href.indexOf('#') : -1
+    if (~hashIdx) window.history.replaceState(null, '', loc.href.slice(0, hashIdx))
+    e.preventDefault()
+  }
+
+  function activateTabSync (e) {
+    activateTab.call(this, e)
+    var thisTabs = this.tabs
+    var thisTab = this.tab
+    var initialY = thisTabs.getBoundingClientRect().y
+    forEach.call(document.querySelectorAll('.tabs'), function (tabs) {
+      if (tabs === thisTabs || tabs.dataset.syncGroupId !== thisTabs.dataset.syncGroupId) return
+      querySelectorWithSiblings(tabs, '.tablist .tab', 'tab').forEach(function (tab) {
+        if (tab.dataset.syncId === thisTab.dataset.syncId) activateTab.call({ tabs: tabs, tab: tab, isSync: true })
+      })
+    })
+    var shiftedBy = thisTabs.getBoundingClientRect().y - initialY
+    if (shiftedBy && (shiftedBy = Math.round(shiftedBy))) window.scrollBy({ top: shiftedBy, behavior: 'instant' })
+  }
+
+  function querySelectorWithSiblings (scope, selector, siblingClass) {
+    var el = scope.querySelector(selector)
+    if (!el) return []
+    var result = [el]
+    while ((el = el.nextElementSibling) && el.classList.contains(siblingClass)) result.push(el)
+    return result
+  }
+
+  function toggleClassOnEach (elements, className, method) {
+    forEach.call(elements, function (el) {
+      el.classList[method](className)
+    })
+  }
+
+  function toggleHidden (el, state) {
+    el.classList[(el.hidden = state) ? 'add' : 'remove']('is-hidden')
+  }
+
+  function toggleSelected (el, state) {
+    el.setAttribute('aria-selected', '' + state)
+    el.classList[state ? 'add' : 'remove']('is-selected')
+    el.tabIndex = state ? 0 : -1
+  }
+
+  function onHashChange () {
+    var id = window.location.hash.slice(1)
+    if (!id) return
+    var tab = document.getElementById(~id.indexOf('%') ? decodeURIComponent(id) : id)
+    if (!(tab && tab.classList.contains('tab'))) return
+    'syncId' in tab.dataset ? activateTabSync.call({ tab: tab }) : activateTab.call({ tab: tab })
+  }
+})()
+</script>
+</body>
+</html>
