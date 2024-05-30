@@ -31,3 +31,8 @@ include::./chapter2/Item2.adoc[]
 === Item3: Enforce the singleton property with a private constructor or an enum type 使用private的建構子或enum 強化Singleton
 
 include::./chapter2/Item3.adoc[]
+
+
+=== Item4: Enforce noninstantiability with a private constructor 透過private constructor強化不可實例化的能力
+
+include::./chapter2/Item4.adoc[]
