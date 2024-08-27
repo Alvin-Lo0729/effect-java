@@ -1,0 +1,259 @@
+
+
+==== 優點一:靜態工廠方法中，有方法名字，可以讓使用者理解
+
+    client看名字就知道應該call哪個工廠方法 而不是去看constructor的參數順序
+
+.範例1
+[source,java]
+----
+
+@Data
+public class Student{
+
+    private String name;
+
+    private String no;
+
+    private Float weight;
+
+    private Float height;
+
+    private Student(String name,String no){
+        this.name=name;
+        this.no=no;
+    }
+
+    public static Student createStudent(String name,String no){
+        return new Student(name,no);
+    }
+}
+
+
+----
+
+==== 優點二:可以不需要在每次呼叫時，都需要建立一個新的物件
+
+    你可以自己決定要給client舊的instance還是new新的 如果創造物件很貴的話 這點就很實用
+
+.範例-利用flyweight模式，減少記憶體損耗
+[source,java]
+----
+
+abstract class Weapon {
+
+  List<Diamond> diamonds = new ArrayList<>();
+
+  public void addDiamond(Diamond diamond) {
+    diamonds.add(diamond);
+  }
+
+  abstract void attack();
+}
+
+class Sword extends Weapon {
+
+  @Override
+  void attack() {
+    System.out.println("Sword attack:" + RandomTool.getRandomNumber(1, 100) + " damage");
+
+    System.out.println(
+        "Use " + diamonds.stream().map(Diamond::getName).collect(Collectors.joining(","))
+            + " to add " + diamonds.stream().mapToInt(Diamond::getAddAttack).sum() + " attack");
+
+
+  }
+}
+
+@Data
+class Diamond {
+
+  private String name;
+
+  private Integer addAttack;
+
+  public Diamond(String name, Integer addAttack) {
+    this.name = name;
+    this.addAttack = addAttack;
+  }
+}
+
+
+class DiamondFactory {
+
+  private static final Map<String, Diamond> diamondMap = new HashMap<>();
+
+  public Diamond getDiamond(String diamondName) {
+    if (diamondMap.containsKey(diamondName)) {
+      System.out.println("Without create " + diamondName + " diamond");
+      return diamondMap.get(diamondName);
+    } else {
+      System.out.println("Add " + diamondName + " diamond");
+      Diamond newDiamond = new Diamond(diamondName, RandomTool.getRandomNumber(1, 100));
+      diamondMap.put(diamondName, newDiamond);
+      return newDiamond;
+    }
+  }
+
+}
+
+class RandomTool {
+
+  public static int getRandomNumber(int min, int max) {
+    return (int) ((Math.random() * (max - min)) + min);
+  }
+}
+
+
+public class Main {
+
+  public static void main(String[] args) {
+    Weapon sword = new Sword();
+    DiamondFactory diamondFactory = new DiamondFactory();
+    sword.addDiamond(diamondFactory.getDiamond("Yellow"));
+    sword.addDiamond(diamondFactory.getDiamond("Blue"));
+    sword.addDiamond(diamondFactory.getDiamond("Black"));
+    sword.addDiamond(diamondFactory.getDiamond("Black"));
+    sword.attack();
+  }
+}
+----
+
+
+==== 優點三:可以返回其子類別物件
+
+.依照方法，返回子類別
+[source,java]
+----
+public class ParentClass{
+  public static ParentClass getParentObject() { //靜態工廠方法 1
+    return ParentClass.newInstance();
+  }
+  public static ParentClass getChildObject() { //靜態工廠方法 2
+    return ChildClass.newInstance();
+  }
+}
+private class ChildClass extends ParentClass{
+  public static ChildClass newInstance() {
+    return new ChildClass();
+  }
+}
+----
+
+.依照方法，返回子類別
+[source,java]
+----
+public interface Runnable {
+          void run();
+}
+
+public class RunAnimal {
+  private static final Dog dog = new Dog();
+  private static final Cat cat = new Cat();
+  private RunAnimal(){}
+
+  public static Runnable getDog() {//static factory method
+    return dog;
+  }
+  public static Runnable getCat(){//static factory method
+    return cat;
+  }
+  private static class Dog implements Runnable{
+    @Override public void run() {
+      System.out("Running fast");
+    }
+  }
+  private static class Cat implements Runnable{
+    @Override public void run() {
+      System.out("Running slow");
+    }
+  }
+}
+----
+
+
+==== 優點四:可藉由方法參數判斷，要返回的物件
+
+[source,java]
+----
+Arrays.stream(new String[]{"2","d","asdf"});
+Arrays.stream(new int[]{2,3,5}).sum();
+Arrays.stream(new long[]{2L,3L,5L}).sum();
+Arrays.stream(new double[]{2.3,3.3,5.4}).sum();
+----
+
+
+==== 優點五: 方法返回的物件類別，在編寫包含該靜態工廠方法的類別時可以不存在
+
+[source,java]
+----
+public class CurrencyFactory {
+
+    private static final Map<String, Class<Currency>> currencyClasses = new HashMap<>();
+
+    public static Currency createCurrency(String currencyCode) {
+        Class<Currency> currencyClass = currencyClasses.get(currencyCode);
+        if (currencyClass == null) {
+            try {
+                currencyClass = Class.forName(currencyCode);
+                currencyClasses.put(currencyCode, currencyClass);
+            } catch (ClassNotFoundException e) {
+                throw new IllegalArgumentException("Unsupported currency code: " + currencyCode);
+            }
+        }
+
+        try {
+            return currencyClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException("Unable to create currency instance: " + currencyCode, e);
+        }
+    }
+}
+----
+
+
+
+
+
+==== 缺點: 沒有提供constructors ，所以不能被子類別化
+
+
+
+
+==== 缺點: 比較難被programmers找到
+
+在Java Doc中他是與物件的方法放在一起，而不向建構子一樣是被分開的，甚至在使用時，也較難讓使用者一目了然，以下有建議的靜態方法名稱，這樣在使用時，較為清楚:
+
+. *from* : 一個類型的轉換方法，他接受一個單一的方法參數，且返回該類型的相應實體物件，舉個例子:
+
+    Date d = Date.from(instant)
+
+. *of* : 一個集合的方法，可接受數個方法參數，且會整合在一起，並返回對應的集合，舉個例子:
+
+    Set<Rank> faceCards = EnumSet.of(JACK, QUEEN, KING);
+
+. *valueOf* : 一個比from與to較為粗略的替代方式，舉個例子:
+
+    BigInteger prime = BigInteger.valueOf(Integer.MAX_VALUE);
+
+. *create or newInstance* : 和instance和getInstance一樣，只是該方法保證每次都會取得一個新的物件, 舉個例子:
+
+    Object newArray = Array.newInstance(classObject, arrayLen);
+
+. *getType* : 像getInstance, 根據不同的類別並使用工廠方法取得。舉個例子:
+
+    FileStore fs = Files.getFileStore(path);
+
+. *newType* : 像getInstance, 根據不同的類別並使用工廠方法取得。舉個例子:
+
+    BufferedReader br = Files.newBufferedReader(path);
+
+. *type* : 一個較為簡潔的方式替代getType或newType
+
+    List<Complaint> litany = Collections.list(legacyLitany);
+
+
+
+靜態工廠方法與建構子都有它們的用途，了解他們的相對優勢，是有好處的。 +
+
+通常狀況下靜態工廠更受歡迎，所以在建立公共的建構子時，考慮一下靜態工廠的建立方式

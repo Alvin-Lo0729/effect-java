@@ -1,0 +1,20 @@
+==== 說明
+
+在撰寫程式的時候，很多會用到靜態的方法和靜態的類別，如java.lang.Math、java.util.Arrays，處裡一些數學與資料上的問題。
+
+這樣的工具類別不希望被實作，因為完全沒有意義，然而在沒有撰寫建構子的狀況下，編譯器會提供一個public、no argument的construct
+
+然而要如何避免這種狀況呢?
+
+[source,java]
+----
+
+public class UtiltyClass{
+    private UtiltyClass(){
+        throw new AssertionError();
+    }
+}
+
+----
+
+由於construct是private等級的，所以無法直接建構出來，避免了該類別被instance的可能，且無法被繼承

@@ -1,0 +1,46 @@
+= Effect Java
+:experimental:
+:icons: font
+:sectnums:
+:toc: left
+:toc-title: 大綱
+:toclevels: 3
+:imagesdir: images
+:reproducible:
+:hardbreaks-option:
+:hide-uri-scheme:
+:url-org: https://github.com/Alvin-Lo0729
+:url-repo: {url-org}/effect-java
+ifdef::env-site[:url-project: link:]
+:url-rel-file-base: link:
+ifdef::env-site,env-yard[]
+:url-rel-file-base: {url-repo}/blob/master/
+endif::[]
+:stylesheet: ./css/clean.css
+
+== Chapter2:  Creating and Destroying Object
+
+=== Item1: Consider static factory methods instead of constructors 建議使用靜態工廠方法替代建構子
+
+include::doc/chapter2/Item1.adoc[]
+
+=== Item2: Consider a builder when faced with many constructor parameters 當建構子參數過多的時候，建議用builder模式
+
+include::doc/chapter2/Item2.adoc[]
+
+=== Item3: Enforce the singleton property with a private constructor or an enum type 使用private的建構子或enum 強化Singleton
+
+include::doc/chapter2/Item3.adoc[]
+
+=== Item4: Enforce noninstantiability with a private constructor 透過private constructor強化不可實例化的能力
+
+include::doc/chapter2/Item4.adoc[]
+
+=== Item5: Prefer dependency injection to hardwiring resources 優先考慮依賴注入來引用資源
+
+include::doc/chapter2/Item5.adoc[]
+
+
+=== Item6: Avoid creating unnecessary object避免創建不必要的對象
+
+include::doc/chapter2/Item6.adoc[]

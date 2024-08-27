@@ -1,0 +1,307 @@
+==== 介紹
+
+靜態工廠與建構子都有一個共通的限制，他不能很好的擴展到大量的可選參數
+
+.範例
+[source,java]
+----
+public class Employee {
+
+    private String lastName;// required
+    private String firstName;// required
+    private String gender;// required
+    private Integer age;// optional
+    private Integer tel;// optional
+    private String address;// optional
+    private Boolean single;// optional
+
+    public Employee(String lastName, String firstName, String gender,
+            Integer age, Integer tel, String address, Boolean single) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.gender = gender;
+        this.age = age;
+        this.tel = tel;
+        this.address = address;
+        this.single = single;
+    }
+
+ public Employee(String lastName, String firstName, String gender) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.gender = gender;
+    }
+
+    public Employee(String lastName, String firstName, String gender,Integer age){
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.gender = gender;
+        this.age = age;
+    }
+    public Employee(String lastName, String firstName, String gender,Integer age,Integer tel){
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.gender = gender;
+        this.age = age;
+        this.tel = tel;
+    }
+    public Employee(String lastName, String firstName, String gender,Integer age,Integer tel){
+        Employee(String lastName, String firstName, String gender,Integer age,Integer tel,null,null,null);
+    }
+}
+----
+
+以上的方式會有以下問題
+
+. 無法快速了解，如果不點進去Employee class裡面查看，是不會知道傳進去的參數定義。
+
+. 有序性，一定要按照建構函式裡定的順序設值。
+
+. 不太優雅，有時候必須為了滿足參數傳了null。
+
+. 沒有彈性，後來需求增加多了一個email，就在constructor裡面往後加，然後去找出所有使用到的地方去修改
+
+這時候我們用另一種方式
+
+.範例二
+[source,java]
+----
+public class Employee {
+
+    private String lastName;// required
+    private String firstName;// required
+    private String gender;// required
+    private Integer age;// optional
+    private Integer tel;// optional
+    private String address;// optional
+    private Boolean single;// optional
+}
+
+class Test{
+
+    public void test1(){
+        Employee emp=new Employee();
+        emp.setLastName("a");
+        emp.setFirstName("b");
+        emp.setGender("c");
+        emp.setAge(5);
+        emp.setTel(6);
+        emp.setAddress("d");
+        emp.setSingle("e");
+    }
+}
+----
+
+這個方式下有兩個缺點
+
+. 太自由了，例如有個開發者少設置了一個必要欄位，如果又沒有嚴謹的驗證測試，上線可能會導致runtime exception。
+
+. inconsistent state問題，多執行緒的環境下同時操作同一個物件，執行緒B把值改掉了導致執行緒A處理錯誤，也因為多執行緒環境無規律不好重現問題，有時候你需要使它成為不可變物件 (Immutable object)才行。
+
+因此我們來看本章推薦的建造者模式(builder pattern)
+
+.builder pattern
+[source,java]
+----
+@Data
+public class Employee {
+
+  private String lastName;// required
+  private String firstName;// required
+  private String gender;// required
+  private Integer age;// optional
+  private Integer tel;// optional
+  private String address;// optional
+  private Boolean single;// optional
+
+  public Employee(Builder builder) {
+    this.lastName = Objects.requireNonNull(builder.lastName);
+    this.firstName = Objects.requireNonNull(builder.firstName);
+    this.gender = StringUtils.isNotEmpty(builder.gender) ? builder.gender.toUpperCase() : "";
+    this.age = builder.age;
+    this.tel = builder.tel;
+    this.address = Objects.toString(builder.address, "Taiwan");
+    this.single = builder.single;
+  }
+
+  public static class Builder {
+
+    private final String lastName;
+    private final String firstName;
+    private final String gender;
+
+    private Integer age;
+    private Integer tel;
+    private String address;
+    private Boolean single;
+
+    public Builder(String lastName, String firstName, String gender) {
+      this.lastName = lastName;
+      this.firstName = firstName;
+      this.gender = gender;
+    }
+
+    public Builder age(Integer age) {
+      this.age = age;
+      return this;
+    }
+
+    public Builder tel(Integer tel) {
+      this.tel = tel;
+      return this;
+    }
+
+    public Builder address(String address) {
+      this.address = address;
+      return this;
+    }
+
+    public Builder single(Boolean single) {
+      this.single = single;
+      return this;
+    }
+
+    public Employee build() {
+      return new Employee(this);
+    }
+  }
+}
+
+public class Main {
+
+  public static void main(String[] args) {
+    Employee employee = new Employee.Builder("a", "b", "c")
+        .age(5).address("cdd").build();
+  }
+}
+----
+
+
+使用Builder Pattern，可以將類別變為可變形直，且避免掉建構工廠與用setter帶來的問題
+
+.繼承的方式
+[source,java]
+----
+public abstract class Pizza {
+
+  public enum Topping {HAM, MUSHROOM, ONION, PEPPER, SAUSAGE}
+
+  final Set<Topping> toppings;
+
+  abstract static class Builder<T extends Builder<T>> {
+
+    EnumSet<Topping> toppings = EnumSet.noneOf(Topping.class);
+
+    public T addTopping(Topping topping) {
+      toppings.add(topping);
+      return self();
+    }
+
+    abstract Pizza build();
+
+    protected abstract T self();
+  }
+
+  Pizza(Builder<?> builder) {
+    toppings = builder.toppings.clone();
+  }
+}
+
+----
+
+
+.素食PIZZA
+[source,java]
+----
+@Getter
+public class VegetablePizza extends Pizza {
+
+  public enum Size {
+    SMALL, MEDIUM, LARGE
+  }
+
+  private final Size size;
+
+
+  private VegetablePizza(Builder builder) {
+    super(builder);
+    this.size = builder.size;
+  }
+
+
+  public static class Builder extends Pizza.Builder<Builder> {
+
+    private final Size size;
+
+    public Builder(Size size) {
+      this.size = Objects.requireNonNull(size);
+    }
+
+    @Override
+    Pizza build() {
+      return new VegetablePizza(this);
+    }
+
+    @Override
+    protected Builder self() {
+      return this;
+    }
+
+
+  }
+}
+
+----
+
+.Calzone Pizza
+[source,java]
+----
+
+@Getter
+public class CalzonePizza extends Pizza {
+
+  private final boolean sauceInside;
+
+  public CalzonePizza(Builder builder) {
+    super(builder);
+    this.sauceInside = builder.sauceInside;
+  }
+
+  public static class Builder extends Pizza.Builder<Builder> {
+
+    private boolean sauceInside;
+
+    public Builder sauceInside(boolean sauceInside) {
+      this.sauceInside = sauceInside;
+      return this;
+    }
+
+    @Override
+    Pizza build() {
+      return new CalzonePizza(this);
+    }
+
+    @Override
+    protected Builder self() {
+      return this;
+    }
+  }
+
+}
+----
+
+
+.用法
+[source,java]
+----
+public class Main {
+
+  public static void main(String[] args) {
+    Pizza pizza = new VegetablePizza.Builder(Size.MEDIUM).addTopping(Topping.MUSHROOM).build();
+
+    Pizza pizzaA = new CalzonePizza.Builder(Size.LARGE).addTopping(Topping.MUSHROOM)
+        .addTopping(Topping.HAM).sauceInside(true).build();
+  }
+}
+
+----

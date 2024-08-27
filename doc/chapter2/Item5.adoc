@@ -1,0 +1,78 @@
+==== 說明
+有需多類別會依賴一個或多個底層的資源，例如，SpellChecker需要依賴dictionary，因此像以下這樣把類別時間為靜態類別的作法並不少見
+
+[source,java]
+----
+
+public class SpellChecker {
+
+  private static final Lexicon dictionary = new Lexicon();
+
+  private SpellChecker() {
+  }
+
+  public static boolean isValid(String word) {
+    return dictionary.isValid(word);
+  }
+
+  public static List<String> suggestions(String typo) {
+    return dictionary.suggestions(typo);
+  }
+
+}
+----
+
+同樣的，將類別實作為Singleton的作法也很常見
+
+[source,java]
+----
+public class SpellChecker2 {
+
+  private final Lexicon dictionary = new Lexicon();
+
+  private SpellChecker2() {
+  }
+
+  public static SpellChecker2 INSTANCE = new SpellChecker2();
+
+  public boolean isValid(String word) {
+    return dictionary.isValid(word);
+  }
+
+  public List<String> suggestions(String typo) {
+    return dictionary.suggestions(typo);
+  }
+
+}
+----
+
+以上兩種方法都不理想，因為他們都是假定只有一本辭典可用。實際ˋ上每一種語言都有自己的辭典，特殊詞彙還要使用特殊的辭典。 此外，可能還需要用特殊的辭典進行測試。因此假定用一本辭典就能滿足所有的需求，簡直癡心妄想
+
+建議嘗試用SpellChecker來支持多辭典，即使在現有的拼寫檢查氣中，設dictionary為 NON-final，並添加一個方法用它來修改辭典，這種設置會顯得很笨拙，容易出錯，並且無法**並行**工作。
+
+**靜態工具類和Singleton類不適合於需要的引用底層資源的類別**，這裡需要的是能夠支持類的多個實例(在本例子中是指SpellChecker)，每一個實例都使用客戶端指定的資源(在本例子中是指dictionary)。滿足該需求的最簡單的模式是，**當創建一個新的實例時，就將該資源傳到Construct中**。這是依賴注入(dependency injection)的一種形式
+
+
+[source,java]
+----
+public class SpellChecker3 {
+
+  private final Lexicon dictionary;
+
+  private SpellChecker3(Lexicon dictionary) {
+    this.dictionary = dictionary;
+  }
+
+  public boolean isValid(String word) {
+    return dictionary.isValid(word);
+  }
+
+  public List<String> suggestions(String typo) {
+    return dictionary.suggestions(typo);
+  }
+}
+----
+
+依賴注入(dependency injection)也適用於Construct、static factory、builder。
+
+
