@@ -40,7 +40,10 @@ include::doc/chapter2/Item4.adoc[]
 
 include::doc/chapter2/Item5.adoc[]
 
-
 === Item6: Avoid creating unnecessary object避免創建不必要的對象
 
 include::doc/chapter2/Item6.adoc[]
+
+=== Item6: Eliminate obsolete object references消除過時的對象引用
+
+include::doc/chapter2/Item7.adoc[]
