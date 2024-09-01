@@ -1,4 +1,4 @@
-package idv.alvin.charpt2.item6;
+package idv.alvin.item6;
 
 public class StringRomanNumeral {
 

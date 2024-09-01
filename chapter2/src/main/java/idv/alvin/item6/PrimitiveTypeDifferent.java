@@ -1,4 +1,4 @@
-package idv.alvin.charpt2.item6;
+package idv.alvin.item6;
 
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.time.StopWatch;

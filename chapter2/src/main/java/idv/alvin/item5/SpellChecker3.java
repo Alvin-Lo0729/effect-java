@@ -1,15 +1,14 @@
-package idv.alvin.charpt2.item5;
+package idv.alvin.item5;
 
 import java.util.List;
 
-public class SpellChecker2 {
+public class SpellChecker3 {
 
-  private final Lexicon dictionary = new Lexicon();
+  private final Lexicon dictionary;
 
-  private SpellChecker2() {
+  private SpellChecker3(Lexicon dictionary) {
+    this.dictionary = dictionary;
   }
-
-  public static SpellChecker2 INSTANCE = new SpellChecker2();
 
   public boolean isValid(String word) {
     return dictionary.isValid(word);
@@ -18,5 +17,4 @@ public class SpellChecker2 {
   public List<String> suggestions(String typo) {
     return dictionary.suggestions(typo);
   }
-
 }

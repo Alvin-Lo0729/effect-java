@@ -1,4 +1,4 @@
-package idv.alvin.charpt2.item7;
+package idv.alvin.item7;
 
 import java.util.Arrays;
 import java.util.EmptyStackException;
