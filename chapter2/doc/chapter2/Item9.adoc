@@ -1,0 +1,35 @@
+==== 說明
+
+Java Lib 中包括了許多須使用 close方法的資源，例如InputStream、OutputStream、java.sql.Connection。
+
+使用者經常會忽略資源的close，造成嚴重的性能問題。
+
+根據經驗try-finally是確保資源會被適時關閉的方法，但是try-finally的缺點是會讓程式碼變得冗長，且容易出錯。
+
+.第一版
+[source,java]
+----
+ static String firstLineOfFile(String path) throws IOException {
+    BufferedReader br = null;
+    try {
+      br = new BufferedReader(new FileReader(path));
+      return br.readLine();
+    }  finally {
+      br.close();
+    }
+  }
+----
+
+.第一版
+[source,java]
+----
+ static String firstLineOfFile(String path) throws IOException {
+    BufferedReader br = null;
+    try {
+      br = new BufferedReader(new FileReader(path));
+      return br.readLine();
+    }  finally {
+      br.close();
+    }
+  }
+----
