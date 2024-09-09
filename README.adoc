@@ -4,7 +4,7 @@
 :sectnums:
 :toc: left
 :toc-title: 大綱
-:toclevels: 3
+:toclevels: 5
 :imagesdir: images
 :reproducible:
 :hardbreaks-option:
@@ -16,7 +16,7 @@ ifdef::env-site[:url-project: link:]
 ifdef::env-site,env-yard[]
 :url-rel-file-base: {url-repo}/blob/master/
 endif::[]
-:stylesheet: ./css/clean.css
+:stylesheet: ./doc/css/adoc-colony.css
 
 == Chapter2:  Creating and Destroying Object
 

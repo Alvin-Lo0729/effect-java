@@ -20,16 +20,114 @@ Java Lib 中包括了許多須使用 close方法的資源，例如InputStream、
   }
 ----
 
-.第一版
+當添加了第二個資源的時候，就會越來越複雜
+
+.第二版
 [source,java]
 ----
- static String firstLineOfFile(String path) throws IOException {
-    BufferedReader br = null;
+  static void secondLineOfFile(String src, String dst) throws IOException {
+    InputStream in = new BufferedInputStream(Files.newInputStream(Paths.get(src)));
     try {
-      br = new BufferedReader(new FileReader(path));
-      return br.readLine();
-    }  finally {
-      br.close();
+      OutputStream out = new BufferedOutputStream(Files.newOutputStream(Paths.get(dst)));
+      try {
+        byte[] buf = new byte[BUFFER_SIZE];
+        int n;
+        while ((n = in.read(buf)) >= 0) {
+          out.write(buf, 0, n);
+        }
+      } finally {
+        out.close();
+      }
+    } finally {
+      in.close();
     }
   }
+----
+
+
+額外問題
+
+.當logger印出來的到底是哪邊有問題?
+[source,java]
+----
+public class CloseExceptionInputStream extends FileInputStream {
+
+
+  public CloseExceptionInputStream(String name) throws FileNotFoundException {
+    super(name);
+  }
+
+
+  @Override
+  public void close() throws IOException {
+    throw new IOException("close exception");
+  }
+}
+
+
+static void tryException(String path) throws IOException {
+    InputStream inputStream = new CloseExceptionInputStream(path);
+    try {
+      inputStream.read();
+      throw new NullPointerException("this is null pointer exception");
+    } catch (IOException e) {
+      log.error("exception:{}", e.getLocalizedMessage(), e);
+    } finally {
+      inputStream.close();
+    }
+  }
+----
+
+在JAVA7引入 try-with-resources後，這些問題就解決了
+
+.第一版修正後
+[source,java]
+----
+  static String firstLineOfFile(String path) throws IOException {
+    try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+      return br.readLine();
+    }
+  }
+----
+
+.第二版修正後
+[source,java]
+----
+static void secondLineOfFile(String src, String dst) throws IOException {
+    try (InputStream in = new BufferedInputStream(Files.newInputStream(Paths.get(src)));
+        OutputStream out = new BufferedOutputStream(Files.newOutputStream(Paths.get(dst)));) {
+      byte[] buf = new byte[BUFFER_SIZE];
+      int n;
+      while ((n = in.read(buf)) >= 0) {
+        out.write(buf, 0, n);
+      }
+    }
+  }
+----
+
+
+使用Try-Catch-Resource後，額外延伸的問題也解決了
+
+[source,java]
+----
+  static void tryException(String path) throws IOException {
+    try (BufferedReader inputStream = new BufferedReader(new CloseExceptionInputStream(path))) {
+      inputStream.readLine();
+      throw new NullPointerException("this is null pointer exception");
+    } catch (IOException e) {
+      log.error("IOException: exception:{}", e.getLocalizedMessage(), e);
+    }
+  }
+----
+
+[source,text]
+----
+Exception in thread "main" java.lang.NullPointerException: this is null pointer exception
+	at idv.alvin.item9.TryFinally.tryException(TryFinally.java:45)
+	at idv.alvin.item9.TryFinally.main(TryFinally.java:20)
+	Suppressed: java.io.IOException: close exception
+		at idv.alvin.item9.CloseExceptionInputStream.close(CloseExceptionInputStream.java:17)
+		at idv.alvin.item9.TryFinally.tryException(TryFinally.java:43)
+		... 1 more
+
 ----
