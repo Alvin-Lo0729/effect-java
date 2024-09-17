@@ -4,7 +4,7 @@
 :sectnums:
 :toc: left
 :toc-title: 大綱
-:toclevels: 5
+:toclevels: 2
 :imagesdir: images
 :reproducible:
 :hardbreaks-option:
@@ -20,34 +20,8 @@ endif::[]
 
 == Chapter2:  Creating and Destroying Object
 
-=== Item1: Consider static factory methods instead of constructors 建議使用靜態工廠方法替代建構子
+include::chapter2/doc/index.adoc[]
 
-include::chapter2/doc/chapter2/Item1.adoc[]
+== Chapter3: Methods Common to All Objects
 
-=== Item2: Consider a builder when faced with many constructor parameters 當建構子參數過多的時候，建議用builder模式
-
-include::chapter2/doc/chapter2/Item2.adoc[]
-
-=== Item3: Enforce the singleton property with a private constructor or an enum type 使用private的建構子或enum 強化Singleton
-
-include::chapter2/doc/chapter2/Item3.adoc[]
-
-=== Item4: Enforce noninstantiability with a private constructor 透過private constructor強化不可實例化的能力
-
-include::chapter2/doc/chapter2/Item4.adoc[]
-
-=== Item5: Prefer dependency injection to hardwiring resources 優先考慮依賴注入來引用資源
-
-include::chapter2/doc/chapter2/Item5.adoc[]
-
-=== Item6: Avoid creating unnecessary object避免創建不必要的對象
-
-include::chapter2/doc/chapter2/Item6.adoc[]
-
-=== Item7: Eliminate obsolete object references消除過時的對象引用
-
-include::chapter2/doc/chapter2/Item7.adoc[]
-
-=== Item9: try-with-resources 優先使用try-with-resources替代try-finally
-
-include::chapter2/doc/chapter2/Item9.adoc[]
+include::chapter3/doc/index.adoc[]

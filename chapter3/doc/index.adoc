@@ -1,0 +1,9 @@
+儘管Object是一個具體類別，但他設計主要是為了擴充，其中所有非final的方法都有明確的general contract，因為它們是要被設計成override的，任何一個class，他在override這些方法的時候，都有責任遵守這些general contract.
+
+如果不能做到這一點，其他依賴於這些約定的class(如HashMap、HashSer)，就無法結合該類別一起正常運作
+
+本章將講述何時以及如何override這些非final的Object方法。
+
+=== Item1: obey the general contract when overriding equals
+
+include::chapter3/Item1.adoc[]

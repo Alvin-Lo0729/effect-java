@@ -8,10 +8,14 @@
         <option value="$PROJECT_DIR$/chapter3/pom.xml" />
         <option value="$PROJECT_DIR$/charpt3/pom.xml" />
         <option value="$PROJECT_DIR$/chapter2/pom.xml" />
+        <option value="$PROJECT_DIR$/dd/pom.xml" />
       </list>
     </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/dd/pom.xml" />
+      </set>
+    </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="graalvm-jdk-22" project-jdk-type="JavaSDK">
-    <output url="file://$PROJECT_DIR$/out" />
-  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_22" default="true" project-jdk-name="graalvm-jdk-22" project-jdk-type="JavaSDK" />
 </project>
