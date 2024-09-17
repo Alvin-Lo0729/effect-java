@@ -1,6 +1,7 @@
 覆蓋equals方法看起來似乎很簡單，但是有許多override方式會導致錯誤，並且後果非常嚴重。
 
 ==== 什麼時候不應該覆蓋equals
+如果滿足下列任一條件，則不應該覆蓋equals方法：
 
 * **Each instance of the class is inherently unique**
 +
@@ -33,4 +34,15 @@ public class PrivateClass{
 
 ----
 
+
+==== 那麼什麼時候該override equals function?
+
+通常屬於 "value" 類別的instance，例如String、Integer、Date，這些instance代表的是一個value，這種情況下，equals方法應該被覆蓋，以便比較這些instance的value是否相等。
+
+但有一種"value"類別，不需要override equals，就是enum
+
+在override equals 的時候，必須要遵守他的general contract，有以下幾點：
+
+* **Reflexive(自反性)** : 對於任何非null的引用值x, x.equals(x)必須回傳true
+* **Symmetric(對稱性)** : 對於任何非null的引用值x, x.equals(x)必須回傳true
 
