@@ -10,8 +10,9 @@ class Chapter3ApplicationTests {
   @Test
   void contextLoads() {
 
-    LocalDateTime localDateTime=LocalDateTime.now();
+    LocalDateTime localDateTime = LocalDateTime.now();
     System.out.println(localDateTime.minusHours(69));
   }
+
 
 }

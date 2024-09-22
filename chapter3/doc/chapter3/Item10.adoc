@@ -1,0 +1,347 @@
+覆蓋equals方法看起來似乎很簡單，但是有許多override方式會導致錯誤，並且後果非常嚴重。
+
+==== 什麼時候不應該覆蓋equals
+
+如果滿足下列任一條件，則不應該覆蓋equals方法：
+
+* **Each instance of the class is inherently unique**
++
+對於代表例如像thread這種類別的instance，而不是代表value的instance，其object提供的equals方法就是適用的。
+
+* **There is no need for the to provide a "logical equality" test**
++
+例如java.util.regex.Pattern可以覆蓋equals方法，以檢查兩個Pattern instance是否代表相同的正規表示式，但是設計者並不認為使用者需要或者期望這樣的功能。在這種情況下，其object提供的equals方法就是適用的。
+
+* **A superclass has already overridden equals, and the superclass behavior is appropriate for this class**
++
+例如Set從AbstractSet繼承了已實作的equals方法，List從AbstractList繼承了已實作的equals方法，Map從AbstractMap繼承了已實作的equals方法
+
+* ** The class is private or package-private , and you are certain that its equals method will never be invoked**
++
+如果你確定equals方法永遠不會被調用，那麼可以override equals方法，確保他不會被意外調用
+
+[source,java]
+----
+
+public class PrivateClass{
+  private int x;
+  private int y;
+
+  @Override
+  public boolean equals(Object o){
+    throw new AssertionError(); // Method is never called
+  }
+}
+
+----
+
+==== 那麼什麼時候該override equals function?
+
+通常屬於 "value" 類別的instance，例如String、Integer、Date，這些instance代表的是一個value，這種情況下，equals方法應該被覆蓋，以便比較這些instance的value是否相等。
+
+但有一種"value"類別，不需要override equals，就是enum
+
+在override equals 的時候，必須要遵守他的general contract，有以下幾點：
+
+* **Reflexive(自反性)** : 對於任何非null的引用值x, x.equals(x)必須回傳true
+* **Symmetric(對稱性)** : 對於任何非null的引用值x與y, 當y.equals(x)回傳true時，x.equals(y)必須回傳true
+* **Transitive(傳遞性)** : 對於任何非null的引用值x、y、z, 當x.equals(y)回傳true且y.equals(z)回傳true時，x.equals(z)必須回傳true
+* **Consistent(一致性)** : 對於任何非null的引用值x與y, 只要equals的比較值沒有改變，那麼多次呼叫x.equals(y)必須回傳相同的結果
+* **Non-nullity** : 對於任何非null的引用值x, x.equals(null)必須回傳false
+
+在上面的規則如果違反了，則程式會變得不正常，甚至崩潰，接下來我們一一的看以上面的條件，並說明
+
+===== Reflexive(自反性)
+
+要求對於任何非null的引用值x, x.equals(x)必須回傳true，如果違反此條則會造成使用collection的contain 或者放入set時，無法正常運作
+
+[source,java]
+----
+@Data
+@AllArgsConstructor
+public class ReflexiveBean {
+  private String a;
+  private Integer b;
+
+  public boolean equals(Object x){
+    System.out.println("ReflexiveBean.equals() called");
+    if (x == null) { return false; }
+    if (x == this) { return false; }
+    if (x.getClass() != this.getClass()) { return false; }
+    ReflexiveBean that = (ReflexiveBean) x;
+    return this.a.equals(that.a) && this.b.equals(that.b);
+  }
+
+}
+
+
+@SpringBootTest
+class ReflexiveBeanTest {
+
+  @Test
+  void testEquals() {
+    ReflexiveBean a = new ReflexiveBean("a", 1);
+    Assertions.assertEquals(a, a);
+  }
+
+  @Test
+  void testSet() {
+    ReflexiveBean a = new ReflexiveBean("a", 1);
+    Collection<ReflexiveBean> collection = new ArrayList<>();
+    collection.add(a);
+    Assertions.assertTrue(collection.contains(a));
+  }
+}
+----
+
+===== Symmetric(對稱性)
+
+此約定是說任何兩個物件對於"他們是否相等"的問題，其回答都需保持一致。
+
+.原始版本
+[source,java]
+----
+
+public record CaseInsensitiveString(String s) {
+
+  public CaseInsensitiveString(String s) {
+    this.s = Objects.requireNonNull(s);
+  }
+
+  @Override
+  public boolean equals(Object x) {
+    if (x instanceof CaseInsensitiveString) {
+      return s.equalsIgnoreCase(((CaseInsensitiveString) x).s);
+    }
+    if (x instanceof String) {
+      return s.equalsIgnoreCase((String) x);
+    }
+    return false;
+  }
+}
+
+
+@SpringBootTest
+class CaseInsensitiveStringTest {
+
+
+  @Test
+  public void testEquals() {
+    CaseInsensitiveString a = new CaseInsensitiveString("Police");
+    CaseInsensitiveString b = new CaseInsensitiveString("police");
+
+    Assertions.assertEquals(a, b);
+    Assertions.assertEquals(b, a);
+
+    CaseInsensitiveString c = new CaseInsensitiveString("Police");
+    String d = "Police";
+
+    Assertions.assertEquals(c, d);
+    Assertions.assertEquals(d, c);
+  }
+}
+----
+
+在上面的例子中，第二個測試部分，我們執行後會發現 Assertions.assertEquals(d, c); 此行的結果為false 因為在String中，其equals方法沒有包含CaseInsensitiveString的內容進去所以會造成false，因此建議CaseInsensitiveString此類別的equals方法應該修正，讓其保持對稱性
+
+.修正後
+[source,java]
+----
+
+public record CaseInsensitiveString(String s) {
+
+  public CaseInsensitiveString(String s) {
+    this.s = Objects.requireNonNull(s);
+  }
+
+  @Override
+  public boolean equals(Object x) {
+    if (x instanceof CaseInsensitiveString) {
+      return s.equalsIgnoreCase(((CaseInsensitiveString) x).s);
+    }
+    return false;
+  }
+}
+
+
+@SpringBootTest
+class CaseInsensitiveStringTest {
+
+
+  @Test
+  public void testEquals() {
+    CaseInsensitiveString a = new CaseInsensitiveString("Police");
+    CaseInsensitiveString b = new CaseInsensitiveString("police");
+
+    Assertions.assertEquals(a, b);
+    Assertions.assertEquals(b, a);
+  }
+}
+----
+
+===== Transitive(傳遞性)
+此equals方法需要滿足以下
+如果第一個物件等於第二個物件，而第二個物件又等於第三個物件，則第一個物件一定等於第三個物件
+
+先用一個類別作為開始介紹
+
+[source,java]
+----
+@Getter
+@ToString
+public class Point {
+
+  private final int x;
+  private final int y;
+
+  public Point(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof Point p)) {
+      return false;
+    }
+    return p.x == x && p.y == y;
+  }
+}
+
+----
+
+假設你想要extend這個類別的時候，為其添加顏色的資訊
+
+[source,java]
+----
+package idv.alvin.chapter3.bean.transitivity;
+
+import lombok.Getter;
+import lombok.ToString;
+
+@Getter
+@ToString
+public class ColorPoint extends Point{
+
+  private final Color color;
+  public ColorPoint(int x, int y,Color color) {
+    super(x, y);
+    this.color=color;
+  }
+
+}
+----
+
+其equals方法你會做什麼樣子呢?
+[source,java]
+----
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof ColorPoint cp)) {
+      return false;
+    }
+    return super.equals(cp) &&cp.color==color;
+  }
+----
+
+如果做成以上方式會造成以下問題
+
+[source,java]
+----
+import idv.alvin.chapter3.bean.transitivity.Point;
+
+public void test(){
+  Point p=new Point(1,2);
+  ColorPoint cp=new ColorPoint(1,2,Color.RED);
+  p.equals(cp); //true
+  cp.equals(p); //false
+}
+----
+
+當發現這樣的問題時，你可能會用以下方式解決
+[source,java]
+----
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof Point p)) {
+      return false;
+    }
+    if(!(o instanceof ColorPoint cp)){
+      return o.equals(this);
+    }
+
+    return super.equals(cp)&&cp.color==color;
+  }
+----
+
+這種方法提供了對映性，卻犧牲了傳遞性
+[source,java]
+----
+import idv.alvin.chapter3.bean.transitivity.ColorPoint;import idv.alvin.chapter3.bean.transitivity.Point;public void test(){
+  ColorPoint p1=new ColorPoint(1,2,Color.RED);
+  Point point=new Point(1,2);
+  ColorPoint p2=new ColorPoint(1,2,Color.BLUE);
+  p1.equals(point); //true
+  point.equals(p2); //true
+  p1.equals(p2); //false
+
+}
+----
+
+這種情況下，我們可以使用"組合"的方式來解決這個問題
+
+[source,java]
+----
+@Getter
+@ToString
+public class ColorPoint2 {
+
+  private final Point point;
+  private final Color color;
+
+  public ColorPoint2(int x, int y, Color color) {
+    point = new Point(x, y);
+    this.color = color;
+  }
+  public Point asPoint() {
+    return point;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof ColorPoint2 cp)) {
+      return false;
+    }
+    return this.point.equals(cp.point)&& this.color.equals(cp.color);
+  }
+}
+----
+這樣確保了equals方法的傳遞性
+
+===== Consistent(一致性)
+當兩個物件相等的時候，他就必須始終保持相等，除非它們中有一個物件被修改了。
+所以在撰寫類別的時候，需考慮是否應該是不可變的，如果他是不可變的則須保證equals方法的一致性。
+
+另外equals方法，不要讓其依賴於不可靠的資源。例如java.net.URL的equals方法，會依賴於網路連線，這樣的equals方法是不可靠的。
+
+===== Non-nullity(非null)
+
+對於任何非null的引用值x, x.equals(null)必須回傳false，這樣的規則是為了避免NullPointerException，且可以使用 instanceof 來避免此問題
+
+
+==== 結論
+
+綜合上述的方式我們可以用以下方法來寫出較好的equals方法
+
+* 使用==運算子檢查引用是否相等，如果是則回傳true
+* 使用instanceof運算子檢查引用是否為正確的類別，如果不是則回傳false
+* 把參數轉換成正確的類型
+* 對於該類別中每個關鍵的欄位，檢查參數與該物件是否相等
+* 在撰寫完equals方法後，確保其符合其五個約定，並撰寫單元測試檢驗其特性
+
+最後是一些告誡
+
+* override equals方法時，必須要override hashCode方法
+* 不要企圖讓equals方法太過聰明，這樣會讓程式變得複雜，並且容易出錯
+* 不要讓equals方法的參數Object替換為其他類型
+

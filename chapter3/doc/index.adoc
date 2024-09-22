@@ -6,4 +6,4 @@
 
 === Item1: obey the general contract when overriding equals
 
-include::chapter3/Item1.adoc[]
+include::chapter3/Item10.adoc[]
