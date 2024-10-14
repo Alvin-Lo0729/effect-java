@@ -4,6 +4,10 @@
 
 本章將講述何時以及如何override這些非final的Object方法。
 
-=== Item1: obey the general contract when overriding equals
+=== Item10: obey the general contract when overriding equals
 
 include::chapter3/Item10.adoc[]
+
+=== Item11: Always override hashCode when you override equals
+
+include::chapter3/Item11.adoc[]

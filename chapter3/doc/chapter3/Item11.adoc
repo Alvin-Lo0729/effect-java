@@ -1,0 +1,178 @@
+**在每個有override equals方法的類別，都必須override hashCode方法**
+如果不這樣做，就會違反hashCode的通用約定，這樣的話，這個類別的instance就無法在HashMap、HashSet等集合中正常運作。
+
+Object 有關hashCode的通用約定如下：
+
+* 在應用程式執行期間，只要物件的equals方法內的相關資訊沒有被修改，那麼對同一個物件的多次呼叫hashCode方法必須回傳相同的數值。
+
+* 如果兩個物件根據equals(Object)方法是相等的，那麼這兩個物件呼叫hashCode方法必須回傳相同的數值。
+
+* 如果兩個物件根據equals(Object)方法是不相等的，那麼這兩個物件呼叫hashCode方法不一定要回傳不同的數值。但是，不同的數值可以提高hash table的效能。
+
+那麼如果沒有override hashCode方法而違反的約定是第二條:相等的物件必須具有相等的hash Code。
+
+以下是一個例子:
+
+[source,java]
+----
+public final class PhoneNumber {
+
+  private final short areaCode, prefix, lineNum;
+
+  public PhoneNumber(int areaCode, int prefix, int lineNum) {
+    this.areaCode = rangeCheck(areaCode, 999, "area code");
+    this.prefix = rangeCheck(prefix, 999, "prefix");
+    this.lineNum = rangeCheck(lineNum, 9999, "line num");
+  }
+
+  private static short rangeCheck(int lineNum, int i, String lineNum1) {
+    if (lineNum < 0 || lineNum > i) {
+      throw new IllegalArgumentException(lineNum1 + ": " + lineNum);
+    }
+    return (short) lineNum;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) {
+      return true;
+    }
+    if (!(o instanceof PhoneNumber pn)) {
+      return false;
+    }
+    return pn.lineNum == lineNum && pn.prefix == prefix && pn.areaCode == areaCode;
+  }
+}
+----
+
+上述的類別有override equals方法，但未override hashCode方法，那麼他會在以下的例子遇到什麼問題?
+
+[source,java]
+----
+public class PhoneNumberMapTest {
+  @Test
+  public void testInsertMap(){
+    Map<PhoneNumber,String> map=new HashMap<>();
+    map.put(new PhoneNumber(707,867,5309),"Jenny");
+    Assertions.assertNotNull(map.get(new PhoneNumber(707,867,5309)));
+  }
+}
+----
+
+你會發現，這個測試會失敗，因為HashMap的get方法會回傳null，這是因為PhoneNumber的hashCode方法沒有被override，所以他會回傳不同的hash code，所以HashMap認為這兩個物件是不相等的。
+
+那麼該如何修正呢?
+只需要PhoneNumber class提供一個適當的hashCode方法即可。
+
+那麼hashCode方法該如何實作呢?
+以下是一個簡單的範例:
+
+[source,java]
+----
+@Override
+public int hashCode() {
+  return 42;
+}
+----
+
+雖然說以上的例子是合法的但是不建議這麼實作，它會讓MAP效能變差，且會造成hash變成跟linked list一樣的效能。
+
+一個好的HASH 函數通常傾向"為不相等的object產生不相等的hash code"，這樣可以讓hash table的效能更好。
+
+因此以下是較簡單的解決辦法:
+
+. 創建一個int變數並命名為result，並將它初始化為第一個關鍵變數c的HASH值，如何轉化為hash值，請參考2.a
+. 為物件中剩下的關鍵值f都完成以下步驟
+.. 為接下來的關鍵值計算為int類型的hash code，並命名為c
+... 如果該值f是基本類型，則使用該類型的hashCode方法
+... 如果該值f是物件，則使用該物件的hashCode方法
+... 如果該值f是陣列，則使用Arrays.hashCode方法，或者針對需要計算的關鍵值去做hash值運算
+.. 按照下列公式把2.a計算得到的hash code c合併到result中
+
+[source,java]
+----
+result=31*result+c;
+----
+
+現在我們依照PhoneNumber這個類別做實作
+
+[source,java]
+----
+public class PhoneNumberWithNewHashCode {
+
+  private final short areaCode;
+  private final short prefix;
+  private final short lineNum;
+
+  public PhoneNumberWithNewHashCode(int areaCode, int prefix, int lineNum) {
+    this.areaCode =areaCode;
+    this.prefix = prefix;
+    this.lineNum =lineNum;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Short.hashCode(areaCode);
+    result = 31 * result + Short.hashCode(prefix);
+    result = 31 * result + Short.hashCode(lineNum);
+    return result;
+  }
+}
+
+----
+
+以上的方法對於大多數的程式已經足夠了，如果想要做到盡可能的不造成衝突，請參閱guava's com.google.common.hash.hashing
+
+在Objects類別中，有一個靜態方法，他可以帶任意入量的物件，並返回一個hash code，與上列介紹的方法比較起來，其作用是相當的，但是速度會比較慢
+
+[source,java]
+----
+@Override
+public int hashCode() {
+  return Objects.hash(areaCode, prefix, lineNum);
+}
+----
+
+當一個類別是不可變的時候，並且計算的花費量比較大，可以考慮將hash code做緩存在物件內部，而不是每次呼叫hashCode方法時都重新計算。
+
+如果你覺得這個類型的大多數物件會被用在hash table中，那麼可以考慮在建立物件時就計算好hash code，這樣可以提高效能。
+
+否則可以選擇"延遲初始化(lazily initialize)"hash code，當hashCode方法被呼叫時，再去計算hash code.
+
+
+[source,java]
+----
+public class PhoneNumberWithLazilyInitialize {
+
+  private final short areaCode;
+  private final short prefix;
+  private final short lineNum;
+  private int hashCode;
+
+  public PhoneNumberWithLazilyInitialize(short areaCode, short prefix, short lineNum) {
+    this.areaCode = areaCode;
+    this.prefix = prefix;
+    this.lineNum = lineNum;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = hashCode;
+    if (hashCode == 0) {
+      result = Short.hashCode(areaCode);
+      result = 31 * result + Short.hashCode(prefix);
+      result = 31 * result + Short.hashCode(lineNum);
+      hashCode = result;
+    }
+    return result;
+  }
+
+}
+----
+
+**不要試圖從Hash Code的計算中，排除掉任一個關鍵值**
+
+最後每當要override equals方法時，都要記得override hashCode方法，這樣才能讓這個類別在HashMap、HashSet等集合中正常運作。
+
+現在很多套件都有幫你實作，可以參考以下網站
+https://dev.to/cchacin/immutables-autovalue-lombok-which-one-2j33
