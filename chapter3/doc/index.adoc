@@ -15,3 +15,7 @@ include::chapter3/Item11.adoc[]
 === Item12: Always override toString
 
 include::chapter3/Item12.adoc[]
+
+=== Item13: Override clone judiciously
+
+include::chapter3/Item13.adoc
