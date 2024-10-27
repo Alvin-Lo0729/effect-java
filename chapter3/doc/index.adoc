@@ -11,3 +11,7 @@ include::chapter3/Item10.adoc[]
 === Item11: Always override hashCode when you override equals
 
 include::chapter3/Item11.adoc[]
+
+=== Item12: Always override toString
+
+include::chapter3/Item12.adoc[]
