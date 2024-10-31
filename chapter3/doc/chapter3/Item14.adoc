@@ -1,0 +1,47 @@
+
+
+[source,java]
+----
+@Getter
+@ToString
+@AllArgsConstructor
+public class TestComparable implements Comparable<TestComparable> {
+
+  private String name;
+  private Integer number;
+  private String address;
+  private String zipCode;
+
+  @Override
+  public int compareTo(TestComparable o) {
+    return PhoneNumberMapTest.COMPARATOR.compare(this, o);
+  }
+}
+
+public class Item14 {
+
+  public void test1(){
+     TestComparable testComparable = new TestComparable("abc", 333, "55", "1123");
+    TestComparable testComparable2 = new TestComparable("zzz", 555, "55", "1123");
+
+    List<TestComparable> list = Arrays.asList(testComparable, testComparable2);
+
+    SortedSet<TestComparable> sortedSet = new TreeSet<>(COMPARATOR);
+    sortedSet.add(testComparable2);
+    sortedSet.add(testComparable);
+
+    Comparator<TestComparable> cc = Comparator.comparing(TestComparable::getName,Comparator.reverseOrder())
+        .thenComparing(TestComparable::getNumber)
+        .thenComparing(TestComparable::getZipCode)
+        .thenComparing(TestComparable::getAddress);
+    list.sort(cc);
+
+  }
+
+}
+
+
+
+
+
+----

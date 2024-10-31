@@ -16,6 +16,10 @@ include::chapter3/Item11.adoc[]
 
 include::chapter3/Item12.adoc[]
 
-=== Item13: Override clone judiciously
+// === Item13: Override clone judiciously
+//
+// include::chapter3/Item13.adoc
 
-include::chapter3/Item13.adoc
+=== Item14: Consider implementing Comparable
+
+include::chapter3/Item14.adoc[]
