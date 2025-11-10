@@ -1,0 +1,6 @@
+Class 跟 Interface 是JAVA的核心概念，他們也是抽象的基本概念，JAVA提供了許多強大的元素，讓你可以設計Class 與Interface，此章節會闡述一些原則讓你更好的利用這些元素，設計出好用、穩健且靈活的Class與Interface。
+
+=== Item15: Minimize the accessibility of classes and members Class與成員的可訪問性最小化
+
+include::doc/Item15.adoc[]
+

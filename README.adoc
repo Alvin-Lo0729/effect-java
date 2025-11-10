@@ -25,3 +25,7 @@ include::chapter2/doc/index.adoc[]
 == Chapter3: Methods Common to All Objects
 
 include::chapter3/doc/index.adoc[]
+
+== Chapter4: Classes and Interfaces
+
+include::chapter4/README.adoc[]

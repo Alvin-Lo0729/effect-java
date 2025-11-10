@@ -26,16 +26,19 @@ public class Item14 {
 
     List<TestComparable> list = Arrays.asList(testComparable, testComparable2);
 
-    SortedSet<TestComparable> sortedSet = new TreeSet<>(COMPARATOR);
-    sortedSet.add(testComparable2);
-    sortedSet.add(testComparable);
 
     Comparator<TestComparable> cc = Comparator.comparing(TestComparable::getName,Comparator.reverseOrder())
         .thenComparing(TestComparable::getNumber)
         .thenComparing(TestComparable::getZipCode)
         .thenComparing(TestComparable::getAddress);
+
     list.sort(cc);
 
+
+
+    SortedSet<TestComparable> sortedSet = new TreeSet<>(COMPARATOR);
+    sortedSet.add(testComparable2);
+    sortedSet.add(testComparable);
   }
 
 }
